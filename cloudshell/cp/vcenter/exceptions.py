@@ -1,0 +1,2 @@
+class BaseVCenterException(Exception):
+    pass
