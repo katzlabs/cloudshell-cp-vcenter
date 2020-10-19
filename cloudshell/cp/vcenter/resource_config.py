@@ -6,6 +6,8 @@ from cloudshell.shell.standards.core.resource_config_entities import (
     ResourceListAttrRO,
 )
 
+from cloudshell.cp.vcenter.constants import SHELL_NAME
+
 
 class VCenterResourceConfig(GenericResourceConfig):
     user = ResourceAttrRO("User", ResourceAttrRO.NAMESPACE.SHELL_NAME)
@@ -55,3 +57,19 @@ class VCenterResourceConfig(GenericResourceConfig):
     promiscuous_mode = ResourceBoolAttrRO(
         "Promiscuous Mode", ResourceBoolAttrRO.NAMESPACE.SHELL_NAME
     )
+
+    @classmethod
+    def from_context(cls, context, shell_name=SHELL_NAME, api=None, supported_os=None):
+        """Creates an instance of a Resource by given context.
+
+        :param str shell_name: Shell Name
+        :param list supported_os: list of supported OS
+        :param cloudshell.shell.core.driver_context.ResourceCommandContext context:
+        :param cloudshell.api.cloudshell_api.CloudShellAPISession api:
+        :rtype: GenericResourceConfig
+        """
+        return super(VCenterResourceConfig, cls).from_context(
+            context=context,
+            shell_name=shell_name,
+            api=api,
+            supported_os=supported_os)
