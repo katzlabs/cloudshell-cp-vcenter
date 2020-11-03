@@ -16,3 +16,7 @@ class TaskFaultException(BaseVCenterException):
 
 class VMWareToolsNotInstalled(BaseVCenterException):
     """VMWare Tools are not installed."""
+
+
+class InvalidAttributeException(BaseVCenterException):
+    """Attribute is not valid."""

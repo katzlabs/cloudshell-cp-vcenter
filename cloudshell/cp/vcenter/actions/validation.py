@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from logging import Logger
 
 from cloudshell.cp.vcenter.api.client import VCenterAPIClient
+from cloudshell.cp.vcenter.exceptions import InvalidAttributeException
 from cloudshell.cp.vcenter.resource_config import VCenterResourceConfig
 
 SHUTDOWN_METHODS = ("hard", "soft")
@@ -73,14 +74,16 @@ class ValidationActions:
 
 def _is_not_empty(value: str, attr_name: str):
     if not value:
-        raise ValueError(f"{attr_name} cannot be empty")
+        raise InvalidAttributeException(f"{attr_name} cannot be empty")
 
 
 def _is_value_in(value: str, expected_values: Iterable[str], attr_name: str):
     if value not in expected_values:
-        raise ValueError(f"{attr_name} should be one of the {list(expected_values)}")
+        raise InvalidAttributeException(
+            f"{attr_name} should be one of the {list(expected_values)}"
+        )
 
 
 def _one_is_not_empty(values: list, attr_name: str):
     if not any(values):
-        raise ValueError(f"{attr_name} cannot be empty")
+        raise InvalidAttributeException(f"{attr_name} cannot be empty")
