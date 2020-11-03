@@ -110,13 +110,19 @@ class VCenterAPIClient:
         emsg = f"Storage '{storage_name}' not found in parent '{parent.name}'"
         raise ObjectNotFoundException(emsg)
 
-    def get_dv_switch(self, name: str, dc):
+    def get_dv_switch(self, path: str, dc):
+        try:
+            folder_path, dv_name = path.rsplit("/", 1)
+            folder = self.get_folder(folder_path, dc)
+        except ValueError:
+            folder, dv_name = dc.networkFolder, path
+
         for dvs in self._get_items_from_view(
-            dc.networkFolder, vim.dvs.VmwareDistributedVirtualSwitch
+            folder, vim.dvs.VmwareDistributedVirtualSwitch
         ):
-            if dvs.name == name:
+            if dvs.name == dv_name:
                 return dvs
-        emsg = f"DVSwitch '{name}' not found in datacenter '{dc.name}'"
+        emsg = f"DVSwitch '{path}' not found in datacenter '{dc.name}'"
         raise ObjectNotFoundException(emsg)
 
     def get_vm(self, uuid: str, dc):

@@ -33,10 +33,8 @@ class ValidationActions:
         _is_not_empty(conf.address, "address")
         _is_not_empty(conf.user, conf.ATTR_NAMES.user)
         _is_not_empty(conf.password, conf.ATTR_NAMES.password)
-        # todo should datacenter name be optional?
         _is_not_empty(conf.default_datacenter, conf.ATTR_NAMES.default_datacenter)
         _is_not_empty(conf.vm_location, conf.ATTR_NAMES.vm_location)
-        # todo should vm storage name be optional?
         _is_not_empty(conf.vm_storage, conf.ATTR_NAMES.vm_storage)
         _is_value_in(
             conf.shutdown_method, SHUTDOWN_METHODS, conf.ATTR_NAMES.shutdown_method
