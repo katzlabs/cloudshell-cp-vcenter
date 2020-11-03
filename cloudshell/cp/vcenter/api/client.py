@@ -11,6 +11,7 @@ from cloudshell.cp.vcenter.exceptions import (
 )
 from cloudshell.cp.vcenter.utils.cached_property import cached_property
 from cloudshell.cp.vcenter.utils.client_helpers import get_si
+from cloudshell.cp.vcenter.utils.connectivity_helpers import get_vlan_spec
 
 
 class VCenterAPIClient:
@@ -170,3 +171,34 @@ class VCenterAPIClient:
             elif task.info.error.msg:
                 emsg = task.info.error.msg
             raise TaskFaultException(emsg)
+
+    def create_dv_port_group(
+        self,
+        dv_switch,
+        dv_port_name: str,
+        vlan_range: str,
+        port_mode: str,
+        promiscuous_mode: bool,
+        num_ports: int = 32,
+    ):
+        port_conf_policy = (
+            vim.dvs.VmwareDistributedVirtualSwitch.VmwarePortConfigPolicy(
+                securityPolicy=vim.dvs.VmwareDistributedVirtualSwitch.SecurityPolicy(
+                    allowPromiscuous=vim.BoolPolicy(value=promiscuous_mode),
+                    forgedTransmits=vim.BoolPolicy(value=True),
+                    macChanges=vim.BoolPolicy(value=False),
+                    inherited=False,
+                ),
+                vlan=get_vlan_spec(port_mode, vlan_range),
+            )
+        )
+        dv_pg_spec = vim.dvs.DistributedVirtualPortgroup.ConfigSpec(
+            name=dv_port_name,
+            numPorts=num_ports,
+            type=vim.dvs.DistributedVirtualPortgroup.PortgroupType.earlyBinding,
+            defaultPortConfig=port_conf_policy,
+        )
+
+        task = dv_switch.AddDVPortgroup_Task([dv_pg_spec])
+        self._logger.info(f"DV Port Group '{dv_port_name}' CREATE Task ...")
+        self._wait_for_task(task)
