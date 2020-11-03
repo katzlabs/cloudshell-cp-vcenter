@@ -20,7 +20,14 @@ class VCenterAutoloadFlow:
 
         :return:
         """
-        ValidationActions(
-            self._vcenter_client, self._resource_config, self._logger
-        ).validate()
+        validation_actions = ValidationActions(
+            vcenter_client=self._vcenter_client,
+            resource_conf=self._resource_config,
+            logger=self._logger,
+        )
+
+        validation_actions.validate_resource_conf()
+        validation_actions.validate_connection()
+        validation_actions.validate_dc_objects()
+
         return AutoLoadDetails([], [])
