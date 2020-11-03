@@ -1,6 +1,6 @@
 import unittest
 
-from cloudshell.cp.azure import constants  # noqa: F401
+from cloudshell.cp.vcenter import constants  # noqa: F401
 
 
 class TestEmpty(unittest.TestCase):
