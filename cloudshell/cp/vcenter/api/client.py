@@ -25,7 +25,7 @@ class VCenterAPIClient:
         self._logger = logger
 
     # todo: check id we need this
-    # def back_slash_to_front_converter(string):
+    # def back_slash_to_front_converter(string):  #noqa
     #     """
     #     Replacing all \ in the str to /
     #     :param string: single string to modify

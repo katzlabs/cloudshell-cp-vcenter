@@ -1,7 +1,7 @@
 import atexit
 import ssl
 
-from pyVim.connect import SmartConnect, Disconnect
+from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim  # noqa
 
 from cloudshell.cp.vcenter.exceptions import LoginException
@@ -51,5 +51,5 @@ def get_si(host: str, user: str, password: str, port: int):
             atexit.register(Disconnect, si)
             break
     else:
-        raise LoginException('Cannot login with TLSv1_2, TLSv1 and without ssl')
+        raise LoginException("Cannot login with TLSv1_2, TLSv1 and without ssl")
     return si
