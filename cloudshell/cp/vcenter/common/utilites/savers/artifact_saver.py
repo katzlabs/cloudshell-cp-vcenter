@@ -4,6 +4,10 @@ from cloudshell.cp.vcenter.common.utilites.savers.linked_clone_artifact_saver im
 
 
 class ArtifactHandler(object):
+    ALLOWED_DEPLOYMENT_PATHS = ["VCenter Deploy VM From Linked Clone",
+                                "VMware vCenter Cloud Provider 2G."
+                                "vCenter VM From Linked Clone 2G"]
+
     @staticmethod
     def factory(
         saveDeploymentModel,
@@ -20,7 +24,7 @@ class ArtifactHandler(object):
         port_configurer,
         cancellation_service,
     ):
-        if saveDeploymentModel == "VCenter Deploy VM From Linked Clone":
+        if saveDeploymentModel in ArtifactHandler.ALLOWED_DEPLOYMENT_PATHS:
             return LinkedCloneArtifactHandler(
                 pv_service,
                 vcenter_data_model,
