@@ -4,9 +4,10 @@ from cloudshell.cp.vcenter.common.utilites.savers.linked_clone_artifact_saver im
 
 
 class ArtifactHandler(object):
-    ALLOWED_DEPLOYMENT_PATHS = ["VCenter Deploy VM From Linked Clone",
-                                "VMware vCenter Cloud Provider 2G."
-                                "vCenter VM From Linked Clone 2G"]
+    ALLOWED_DEPLOYMENT_PATHS = [
+        "VCenter Deploy VM From Linked Clone",
+        "VMware vCenter Cloud Provider 2G." "vCenter VM From Linked Clone 2G",
+    ]
 
     @staticmethod
     def factory(
