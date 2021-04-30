@@ -281,6 +281,7 @@ class CommandOrchestrator(object):
         connection = self.command_wrapper.execute_command_with_connection(
             context,
             self.save_app_command.save_app,
+            AppResourceModel(),
             save_actions,
             cancellation_context,
         )
@@ -299,6 +300,7 @@ class CommandOrchestrator(object):
             context,
             self.delete_saved_sandbox_command.delete_sandbox,
             delete_saved_apps,
+            AppResourceModel(),
             cancellation_context,
         )
         delete_saved_apps_results = connection

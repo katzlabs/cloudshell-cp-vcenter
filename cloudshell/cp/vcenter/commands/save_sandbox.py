@@ -8,10 +8,7 @@ from multiprocessing.pool import ThreadPool
 
 from cloudshell.cp.core.models import SaveApp, SaveAppResult
 
-from cloudshell.cp.vcenter.common.utilites.savers.artifact_saver import (
-    ArtifactHandler,
-    UnsupportedArtifactHandler,
-)
+from cloudshell.cp.vcenter.common.utilites.savers.artifact_saver import ArtifactHandler
 from cloudshell.cp.vcenter.common.vcenter.task_waiter import SynchronousTaskWaiter
 from cloudshell.cp.vcenter.common.vcenter.vmomi_service import pyVmomiService
 
@@ -51,8 +48,10 @@ class SaveAppCommand:
         self,
         si,
         logger,
+        session,
         vcenter_data_model,
         reservation_id,
+        app_resource_model,
         save_app_actions,
         cancellation_context,
     ):
@@ -89,6 +88,8 @@ class SaveAppCommand:
                 vcenter_data_model,
                 si,
                 logger,
+                session,
+                app_resource_model,
                 self.deployer,
                 reservation_id,
                 self.resource_model_parser,
@@ -100,10 +101,6 @@ class SaveAppCommand:
             ): list(g)
             for k, g in actions_grouped_by_save_types
         }
-
-        self.validate_requested_save_types_supported(
-            artifactSaversToActions, logger, results
-        )
 
         error_results = [r for r in results if not r.success]
         if not error_results:
@@ -199,6 +196,7 @@ class SaveAppCommand:
             logger.exception("Save app action {0} failed".format(action.actionId))
             return SaveAppResult(
                 action.actionId,
+                saveDeploymentModel=artifactSaver.save_deployment_model,
                 success=False,
                 errorMessage=str(ex),
                 infoMessage="\n".join(traceback.format_exception(ex_type, ex, tb)),
@@ -209,43 +207,8 @@ class SaveAppCommand:
         artifactSaver.destroy(save_action=action)
         return SaveAppResult(
             action.actionId,
+            saveDeploymentModel=artifactSaver.save_deployment_model,
             success=False,
             errorMessage="Save app action {0} was rolled back".format(action.actionId),
             infoMessage="",
         )
-
-    def validate_requested_save_types_supported(
-        self, artifactSaversToActions, logger, results
-    ):
-        unsupported_savers = [
-            saver
-            for saver in list(artifactSaversToActions.keys())
-            if isinstance(saver, UnsupportedArtifactHandler)
-        ]
-        if unsupported_savers:
-            log_error_message = (
-                "Unsupported save type was included in save app request: {0}".format(
-                    ", ".join(
-                        {saver.unsupported_save_type for saver in unsupported_savers}
-                    )
-                )
-            )
-            logger.error(log_error_message)
-
-            for artifactSaver in list(artifactSaversToActions.keys()):
-                if artifactSaver in unsupported_savers:
-                    result_error_message = (
-                        "Unsupported save type " + artifactSaver.unsupported_save_type
-                    )
-                else:
-                    result_error_message = ""
-
-                save_actions = artifactSaversToActions[artifactSaver]
-                for action in save_actions:
-                    results.append(
-                        SaveAppResult(
-                            action.actionId,
-                            success=False,
-                            errorMessage=result_error_message,
-                        )
-                    )

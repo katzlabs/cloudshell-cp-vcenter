@@ -21,6 +21,9 @@ from cloudshell.cp.vcenter.models.vCenterCloneVMFromVMResourceModel import (
 from cloudshell.cp.vcenter.vm.vcenter_details_factory import VCenterDetailsFactory
 
 SAVED_SANDBOXES = "Saved Sandboxes"
+VM_FROM_LINKED_CLONE_DEPLOYMENT_PATH = (
+    "VMware vCenter Cloud Provider 2G.vCenter VM From Linked Clone 2G"
+)
 
 
 class LinkedCloneArtifactHandler(object):
@@ -30,6 +33,8 @@ class LinkedCloneArtifactHandler(object):
         vcenter_data_model,
         si,
         logger,
+        session,
+        app_resource_model,
         deployer,
         reservation_id,
         resource_model_parser,
@@ -46,6 +51,8 @@ class LinkedCloneArtifactHandler(object):
         self.vcenter_data_model = vcenter_data_model
         self.si = si
         self.logger = logger
+        self.session = session
+        self.app_resource_model = app_resource_model
         self.deployer = deployer
         self.reservation_id = reservation_id
         self.snapshot_saver = snapshot_saver
@@ -54,6 +61,7 @@ class LinkedCloneArtifactHandler(object):
         self.folder_manager = folder_manager
         self.pg_configurer = port_configurer
         self.cs = cancellation_service
+        self.save_deployment_model = VM_FROM_LINKED_CLONE_DEPLOYMENT_PATH
 
     def save(self, save_action, cancellation_context):
         thread_id = threading.current_thread().ident
@@ -91,7 +99,9 @@ class LinkedCloneArtifactHandler(object):
             result = self.deployer.deploy_clone_from_vm(
                 self.si,
                 self.logger,
+                self.session,
                 data_holder,
+                self.app_resource_model,
                 self.vcenter_data_model,
                 self.reservation_id,
                 cancellation_context,
@@ -142,6 +152,7 @@ class LinkedCloneArtifactHandler(object):
             True,
             artifacts=[save_artifact],
             savedEntityAttributes=saved_entity_attributes,
+            saveDeploymentModel=self.save_deployment_model,
         )
 
     def _get_saved_app_result_vcenter_vm_path(self, data_holder, result):
