@@ -1,6 +1,5 @@
 import threading
 from contextlib import contextmanager
-from itertools import groupby
 from threading import Lock
 
 from cloudshell.cp.core.models import (
@@ -24,6 +23,14 @@ SAVED_SANDBOXES = "Saved Sandboxes"
 VM_FROM_LINKED_CLONE_DEPLOYMENT_PATH = (
     "VMware vCenter Cloud Provider 2G.vCenter VM From Linked Clone 2G"
 )
+ATTRIBUTES_TO_IGNORE = [
+            Attribute("Customization Spec", ""),
+            Attribute("Private IP", ""),
+            Attribute("CPU", ""),
+            Attribute("RAM", ""),
+            Attribute("Hostname", ""),
+            Attribute("HDD", ""),
+        ]
 
 
 class LinkedCloneArtifactHandler(object):
@@ -140,6 +147,7 @@ class LinkedCloneArtifactHandler(object):
             Attribute("vCenter VM", vcenter_vm_path),
             Attribute("vCenter VM Snapshot", self.SNAPSHOT_NAME),
         ]
+        saved_entity_attributes.extend(ATTRIBUTES_TO_IGNORE)
 
         self.logger.info(
             "[{1}] Save Action using source type: Linked Clone Successful. Saved Sandbox App with snapshot created: {0}".format(
