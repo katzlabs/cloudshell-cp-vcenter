@@ -24,13 +24,13 @@ VM_FROM_LINKED_CLONE_DEPLOYMENT_PATH = (
     "VMware vCenter Cloud Provider 2G.vCenter VM From Linked Clone 2G"
 )
 ATTRIBUTES_TO_IGNORE = [
-            Attribute("Customization Spec", ""),
-            Attribute("Private IP", ""),
-            Attribute("CPU", ""),
-            Attribute("RAM", ""),
-            Attribute("Hostname", ""),
-            Attribute("HDD", ""),
-        ]
+    Attribute("Customization Spec", ""),
+    Attribute("Private IP", ""),
+    Attribute("CPU", ""),
+    Attribute("RAM", ""),
+    Attribute("Hostname", ""),
+    Attribute("HDD", ""),
+]
 
 
 class LinkedCloneArtifactHandler(object):
