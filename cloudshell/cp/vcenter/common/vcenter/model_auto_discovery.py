@@ -1,8 +1,9 @@
 import collections
 
-from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim
+
+from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 
 from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
 from cloudshell.cp.vcenter.common.utilites.common_utils import (

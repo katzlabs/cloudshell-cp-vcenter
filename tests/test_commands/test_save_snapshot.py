@@ -1,11 +1,16 @@
+import sys
 from unittest import TestCase
-
-from mock import Mock, patch
 
 from cloudshell.cp.vcenter.commands.save_snapshot import SaveSnapshotCommand
 from cloudshell.cp.vcenter.exceptions.snapshot_exists import (
     SnapshotAlreadyExistsException,
 )
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
 
 GET_VM_SNAPSHOTS = (
     "cloudshell.cp.vcenter.commands.save_snapshot.SnapshotRetriever.get_vm_snapshots"
@@ -16,13 +21,13 @@ GET_CURRENT_SNAPSHOT_NAME = "cloudshell.cp.vcenter.commands.save_snapshot.Snapsh
 
 class TestSaveSnapshotCommand(TestCase):
     def test_save_snapshot_should_succeed_when_there_is_no_snapshot(self):
-        vm = Mock()
+        vm = MagicMock()
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
-        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, Mock())
-        si = Mock()
+        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, MagicMock())
+        si = MagicMock()
 
         # Act
         with patch(GET_CURRENT_SNAPSHOT_NAME) as get_current_snapshot_name:
@@ -31,7 +36,7 @@ class TestSaveSnapshotCommand(TestCase):
                 get_vm_snapshots.return_value = {}
                 save_snapshot_command.save_snapshot(
                     si=si,
-                    logger=Mock(),
+                    logger=MagicMock(),
                     vm_uuid="machine1",
                     snapshot_name="new_snapshot",
                     save_memory="No",
@@ -45,13 +50,13 @@ class TestSaveSnapshotCommand(TestCase):
     def test_save_snapshot_should_succeed_when_snapshot_with_the_same_name_does_not_exists(
         self,
     ):
-        vm = Mock()
+        vm = MagicMock()
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
-        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, Mock())
-        si = Mock()
+        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, MagicMock())
+        si = MagicMock()
 
         # Act
         with patch(GET_CURRENT_SNAPSHOT_NAME) as get_current_snapshot_name:
@@ -63,7 +68,7 @@ class TestSaveSnapshotCommand(TestCase):
                 }
                 save_snapshot_command.save_snapshot(
                     si=si,
-                    logger=Mock(),
+                    logger=MagicMock(),
                     vm_uuid="machine1",
                     snapshot_name="new_snapshot",
                     save_memory="No",
@@ -75,13 +80,13 @@ class TestSaveSnapshotCommand(TestCase):
         )
 
     def test_save_snapshot_should_fail_if_snaphost_exists(self):
-        vm = Mock()
+        vm = MagicMock()
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
-        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, Mock())
-        si = Mock()
+        save_snapshot_command = SaveSnapshotCommand(pyvmomi_service, MagicMock())
+        si = MagicMock()
 
         with patch(GET_CURRENT_SNAPSHOT_NAME) as get_current_snapshot_name:
             with patch(GET_VM_SNAPSHOTS) as get_vm_snapshots:
@@ -95,7 +100,7 @@ class TestSaveSnapshotCommand(TestCase):
                 with self.assertRaises(SnapshotAlreadyExistsException):
                     save_snapshot_command.save_snapshot(
                         si=si,
-                        logger=Mock(),
+                        logger=MagicMock(),
                         vm_uuid="machine1",
                         snapshot_name="snapshot2",
                         save_memory="No",

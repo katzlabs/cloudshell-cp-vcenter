@@ -1,6 +1,6 @@
+import sys
 from unittest import TestCase
 
-from mock import MagicMock, Mock
 from pyVim.connect import Disconnect, SmartConnect
 from pyVmomi import vim
 
@@ -19,25 +19,30 @@ from cloudshell.cp.vcenter.vm.vnic_to_network_mapper import VnicToNetworkMapper
 
 from tests.utils.testing_credentials import TestCredentials
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestVirtualSwitchToMachineConnector(TestCase):
     def test_connect(self):
         # Arrange
-        si = Mock()
+        si = MagicMock()
 
-        py_vmomi_service = Mock()
-        py_vmomi_service.connect = Mock(return_value=si)
+        py_vmomi_service = MagicMock()
+        py_vmomi_service.connect = MagicMock(return_value=si)
 
         dv_port_group_creator = MagicMock()
         virtual_machine_port_group_configurer = MagicMock()
-        vlan_spec = Mock()
+        vlan_spec = MagicMock()
         virtual_switch_to_machine_connector = VirtualSwitchToMachineConnector(
             dv_port_group_creator, virtual_machine_port_group_configurer
         )
 
-        vm = Mock()
+        vm = MagicMock()
 
-        network_map = Mock()
+        network_map = MagicMock()
         network_map.dv_port_name = "dv_port_name"
         network_map.dv_switch_name = "dvSwitch"
         network_map.dv_switch_path = "QualiSB"
@@ -48,16 +53,16 @@ class TestVirtualSwitchToMachineConnector(TestCase):
             si=si,
             vm=vm,
             mapping=[network_map],
-            default_network=Mock(spec=vim.Network),
+            default_network=MagicMock(spec=vim.Network),
             reserved_networks=[],
-            logger=Mock(),
+            logger=MagicMock(),
             promiscuous_mode="True",
         )
 
     def integrationtest(self):
-        resource_connection_details_retriever = Mock()
+        resource_connection_details_retriever = MagicMock()
         credentials = TestCredentials()
-        resource_connection_details_retriever.connection_details = Mock(
+        resource_connection_details_retriever.connection_details = MagicMock(
             return_value=VCenterConnectionDetails(
                 credentials.host, credentials.username, credentials.password
             )

@@ -1,11 +1,5 @@
+import sys
 from unittest import TestCase
-
-from cloudshell.api.cloudshell_api import (
-    ResourceInfo,
-    ResourceInfoVmDetails,
-    VmCustomParam,
-)
-from mock import Mock, create_autospec
 
 from cloudshell.cp.vcenter.commands.refresh_ip import RefreshIpCommand
 from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
@@ -14,26 +8,31 @@ from cloudshell.cp.vcenter.models.VMwarevCenterResourceModel import (
     VMwarevCenterResourceModel,
 )
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, create_autospec
+else:
+    from mock import MagicMock, create_autospec
+
 
 class TestRefreshIpCommand(TestCase):
     def test_refresh_ip(self):
-        nic1 = Mock()
+        nic1 = MagicMock()
         nic1.network = "A Network"
         nic1.ipAddress = ["192.168.1.1"]
 
-        nic2 = Mock()
+        nic2 = MagicMock()
         nic2.network = "A Network"
         nic2.ipAddress = ["111.111.111.111"]
 
-        guest = Mock()
+        guest = MagicMock()
         guest.toolsStatus = "toolsOk"
         guest.net = [nic1, nic2]
 
-        vm = Mock()
+        vm = MagicMock()
         vm.guest = guest
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
         ip_regex = self._create_custom_param("ip_regex", "192\.168\..*")
         refresh_ip_timeout = self._create_custom_param("refresh_ip_timeout", "10")
@@ -45,16 +44,16 @@ class TestRefreshIpCommand(TestCase):
         resource_model.vm_custom_params = [ip_regex, refresh_ip_timeout]
 
         refresh_ip_command = RefreshIpCommand(
-            pyvmomi_service, ResourceModelParser(), Mock()
+            pyvmomi_service, ResourceModelParser(), MagicMock()
         )
-        session = Mock()
-        session.UpdateResourceAddress = Mock(return_value=True)
-        si = Mock()
+        session = MagicMock()
+        session.UpdateResourceAddress = MagicMock(return_value=True)
+        si = MagicMock()
 
         center_resource_model = VMwarevCenterResourceModel()
         center_resource_model.default_datacenter = "QualiSB"
         center_resource_model.holding_network = "anetwork"
-        cancellation_context = Mock()
+        cancellation_context = MagicMock()
 
         # Act
         refresh_ip_command.refresh_ip(
@@ -63,8 +62,8 @@ class TestRefreshIpCommand(TestCase):
             vcenter_data_model=center_resource_model,
             resource_model=resource_model,
             cancellation_context=cancellation_context,
-            logger=Mock(),
-            app_request_json=Mock(),
+            logger=MagicMock(),
+            app_request_json=MagicMock(),
         )
 
         # Assert
@@ -73,29 +72,29 @@ class TestRefreshIpCommand(TestCase):
         )
 
     def _create_custom_param(self, name, value):
-        vm_custom_param = Mock()
+        vm_custom_param = MagicMock()
         vm_custom_param.name = name
         vm_custom_param.value = value
         return vm_custom_param
 
     def test_refresh_ip_choose_ipv4(self):
-        nic1 = Mock()
+        nic1 = MagicMock()
         nic1.network = "A Network"
         nic1.ipAddress = ["192.168.1.1"]
 
-        nic2 = Mock()
+        nic2 = MagicMock()
         nic2.network = "A Network"
         nic2.ipAddress = ["2001:0db8:0a0b:12f0:0000:0000:0000:0001"]
 
-        guest = Mock()
+        guest = MagicMock()
         guest.toolsStatus = "toolsOk"
         guest.net = [nic1, nic2]
 
-        vm = Mock()
+        vm = MagicMock()
         vm.guest = guest
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
         ip_regex = self._create_custom_param("ip_regex", "")
         refresh_ip_timeout = self._create_custom_param("refresh_ip_timeout", "10")
@@ -107,17 +106,17 @@ class TestRefreshIpCommand(TestCase):
         resource_model.vm_custom_params = [ip_regex, refresh_ip_timeout]
 
         refresh_ip_command = RefreshIpCommand(
-            pyvmomi_service, ResourceModelParser(), Mock()
+            pyvmomi_service, ResourceModelParser(), MagicMock()
         )
-        session = Mock()
-        session.UpdateResourceAddress = Mock(return_value=True)
-        session.GetResourceDetails = Mock(return_value=resource_model)
-        si = Mock()
+        session = MagicMock()
+        session.UpdateResourceAddress = MagicMock(return_value=True)
+        session.GetResourceDetails = MagicMock(return_value=resource_model)
+        si = MagicMock()
 
         center_resource_model = VMwarevCenterResourceModel()
         center_resource_model.default_datacenter = "QualiSB"
         center_resource_model.holding_network = "anetwork"
-        cancellation_context = Mock()
+        cancellation_context = MagicMock()
 
         # Act
         refresh_ip_command.refresh_ip(
@@ -126,8 +125,8 @@ class TestRefreshIpCommand(TestCase):
             vcenter_data_model=center_resource_model,
             resource_model=resource_model,
             cancellation_context=cancellation_context,
-            logger=Mock(),
-            app_request_json=Mock(),
+            logger=MagicMock(),
+            app_request_json=MagicMock(),
         )
 
         # Assert
@@ -136,23 +135,23 @@ class TestRefreshIpCommand(TestCase):
         )
 
     def test_refresh_ip_choose_ip_by_regex(self):
-        nic1 = Mock()
+        nic1 = MagicMock()
         nic1.network = "A Network"
         nic1.ipAddress = ["192.168.1.1"]
 
-        nic2 = Mock()
+        nic2 = MagicMock()
         nic2.network = "A Network"
         nic2.ipAddress = ["111.111.111.111"]
 
-        guest = Mock()
+        guest = MagicMock()
         guest.toolsStatus = "toolsOk"
         guest.net = [nic1, nic2]
 
-        vm = Mock()
+        vm = MagicMock()
         vm.guest = guest
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
         ip_regex = self._create_custom_param("ip_regex", "192\.168\..*")
         refresh_ip_timeout = self._create_custom_param("refresh_ip_timeout", "10")
@@ -164,17 +163,17 @@ class TestRefreshIpCommand(TestCase):
         resource_model.vm_custom_params = [ip_regex, refresh_ip_timeout]
 
         refresh_ip_command = RefreshIpCommand(
-            pyvmomi_service, ResourceModelParser(), Mock()
+            pyvmomi_service, ResourceModelParser(), MagicMock()
         )
-        session = Mock()
-        session.UpdateResourceAddress = Mock(return_value=True)
-        session.GetResourceDetails = Mock(return_value=resource_model)
-        si = Mock()
+        session = MagicMock()
+        session.UpdateResourceAddress = MagicMock(return_value=True)
+        session.GetResourceDetails = MagicMock(return_value=resource_model)
+        si = MagicMock()
 
         center_resource_model = VMwarevCenterResourceModel()
         center_resource_model.default_datacenter = "QualiSB"
         center_resource_model.holding_network = "anetwork"
-        cancellation_context = Mock()
+        cancellation_context = MagicMock()
 
         # Act
         refresh_ip_command.refresh_ip(
@@ -183,8 +182,8 @@ class TestRefreshIpCommand(TestCase):
             vcenter_data_model=center_resource_model,
             resource_model=resource_model,
             cancellation_context=cancellation_context,
-            logger=Mock(),
-            app_request_json=Mock(),
+            logger=MagicMock(),
+            app_request_json=MagicMock(),
         )
 
         # Assert
@@ -194,16 +193,16 @@ class TestRefreshIpCommand(TestCase):
 
     def test_refresh_ip_should_fail_static_vm(self):
         # Act
-        refresh_ip_command = RefreshIpCommand(Mock(), Mock(), Mock())
+        refresh_ip_command = RefreshIpCommand(MagicMock(), MagicMock(), MagicMock())
         # assert
         self.assertRaises(
             ValueError,
             refresh_ip_command.refresh_ip,
-            Mock(),
-            Mock(),
-            Mock(),
-            Mock(),
-            Mock(),
-            Mock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
             None,
         )

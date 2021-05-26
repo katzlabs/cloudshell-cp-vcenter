@@ -1,3 +1,4 @@
+import sys
 from unittest import TestCase
 
 from cloudshell.shell.core.driver_context import (
@@ -6,19 +7,23 @@ from cloudshell.shell.core.driver_context import (
     ResourceCommandContext,
     ResourceContextDetails,
 )
-from mock import Mock, create_autospec, patch
 
 from cloudshell.cp.vcenter.common.wrappers.command_wrapper import CommandWrapper
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, create_autospec, patch
+else:
+    from mock import MagicMock, create_autospec, patch
 
 
 class TestCommandWrapper(TestCase):
     def setUp(self):
-        self.si = Mock()
-        self.logger = Mock()
-        self.pv_service = Mock()
-        self.pv_service.connect = Mock(return_value=self.si)
-        self.cloud_shell_helper = Mock()
-        self.resource_model_parser = Mock()
+        self.si = MagicMock()
+        self.logger = MagicMock()
+        self.pv_service = MagicMock()
+        self.pv_service.connect = MagicMock(return_value=self.si)
+        self.cloud_shell_helper = MagicMock()
+        self.resource_model_parser = MagicMock()
 
     def test_execute_command_with_params_and_vcetner_data_model_with_session_inject(
         self,
@@ -40,7 +45,7 @@ class TestCommandWrapper(TestCase):
             wrapper = CommandWrapper(
                 pv_service=self.pv_service,
                 resource_model_parser=self.resource_model_parser,
-                context_based_logger_factory=Mock(),
+                context_based_logger_factory=MagicMock(),
             )
             context = self._create_resource_command_context()
 
@@ -68,7 +73,7 @@ class TestCommandWrapper(TestCase):
             wrapper = CommandWrapper(
                 pv_service=self.pv_service,
                 resource_model_parser=self.resource_model_parser,
-                context_based_logger_factory=Mock(),
+                context_based_logger_factory=MagicMock(),
             )
             context = self._create_resource_command_context()
 
@@ -90,7 +95,7 @@ class TestCommandWrapper(TestCase):
             wrapper = CommandWrapper(
                 pv_service=self.pv_service,
                 resource_model_parser=self.resource_model_parser,
-                context_based_logger_factory=Mock(),
+                context_based_logger_factory=MagicMock(),
             )
             context = self._create_resource_command_context()
 
@@ -112,7 +117,7 @@ class TestCommandWrapper(TestCase):
             wrapper = CommandWrapper(
                 pv_service=self.pv_service,
                 resource_model_parser=self.resource_model_parser,
-                context_based_logger_factory=Mock(),
+                context_based_logger_factory=MagicMock(),
             )
             context = self._create_resource_command_context()
 

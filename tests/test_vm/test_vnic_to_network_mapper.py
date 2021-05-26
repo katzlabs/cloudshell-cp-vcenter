@@ -1,6 +1,6 @@
+import sys
 from unittest import TestCase
 
-from mock import Mock
 from pyVmomi import vim
 
 from cloudshell.cp.vcenter.network.dvswitch.name_generator import (
@@ -9,16 +9,21 @@ from cloudshell.cp.vcenter.network.dvswitch.name_generator import (
 from cloudshell.cp.vcenter.vm.dvswitch_connector import ConnectRequest
 from cloudshell.cp.vcenter.vm.vnic_to_network_mapper import VnicToNetworkMapper
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestVnicToNetworkMapper(TestCase):
     def test_(self):
         vnics = {
-            "net 1": Mock(spec=vim.vm.device.VirtualEthernetCard),
-            "net 2": Mock(spec=vim.vm.device.VirtualEthernetCard),
+            "net 1": MagicMock(spec=vim.vm.device.VirtualEthernetCard),
+            "net 2": MagicMock(spec=vim.vm.device.VirtualEthernetCard),
         }
-        network2 = Mock(spec=vim.Network)
+        network2 = MagicMock(spec=vim.Network)
         network2.name = "aa"
-        network1 = Mock(spec=vim.Network)
+        network1 = MagicMock(spec=vim.Network)
         network1.name = "bb"
         request1 = ConnectRequest("net 2", "aa")
         request2 = ConnectRequest(None, "ab")

@@ -5,10 +5,7 @@ from multiprocessing.pool import ThreadPool
 
 from cloudshell.cp.core.models import ActionResultBase
 
-from cloudshell.cp.vcenter.common.utilites.savers.artifact_saver import (
-    ArtifactHandler,
-    UnsupportedArtifactHandler,
-)
+from cloudshell.cp.vcenter.common.utilites.savers.artifact_saver import ArtifactHandler
 from cloudshell.cp.vcenter.common.vcenter.task_waiter import SynchronousTaskWaiter
 from cloudshell.cp.vcenter.common.vcenter.vmomi_service import pyVmomiService
 
@@ -49,8 +46,10 @@ class DeleteSavedSandboxCommand:
         self,
         si,
         logger,
+        session,
         vcenter_data_model,
         delete_sandbox_actions,
+        app_resource_model,
         cancellation_context,
     ):
         """
@@ -84,6 +83,8 @@ class DeleteSavedSandboxCommand:
                 vcenter_data_model,
                 si,
                 logger,
+                session,
+                app_resource_model,
                 self.deployer,
                 None,
                 self.resource_model_parser,
@@ -96,10 +97,6 @@ class DeleteSavedSandboxCommand:
             for k, g in actions_grouped_by_save_types
         }
 
-        self._validate_save_deployment_models(
-            artifactHandlersToActions, delete_sandbox_actions, results
-        )
-
         error_results = [r for r in results if not r.success]
         if not error_results:
             results = self._execute_delete_saved_sandbox(
@@ -107,29 +104,6 @@ class DeleteSavedSandboxCommand:
             )
 
         return results
-
-    def _validate_save_deployment_models(
-        self, artifactHandlersToActions, delete_sandbox_actions, results
-    ):
-        unsupported_save_deployment_models = [
-            a.unsupported_save_type
-            for a in list(artifactHandlersToActions.keys())
-            if isinstance(a, UnsupportedArtifactHandler)
-        ]
-        if unsupported_save_deployment_models:
-            for action in delete_sandbox_actions:
-                unsupported_msg = "Unsupported save deployment models: {0}".format(
-                    ", ".join(unsupported_save_deployment_models)
-                )
-                results.append(
-                    ActionResultBase(
-                        type="DeleteSavedAppResult",
-                        actionId=action.actionId,
-                        success=False,
-                        infoMessage=unsupported_msg,
-                        errorMessage=unsupported_msg,
-                    )
-                )
 
     def _execute_delete_saved_sandbox(
         self, artifactHandlersToActions, cancellation_context, logger, results

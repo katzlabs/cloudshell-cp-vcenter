@@ -1,9 +1,10 @@
 import inspect
 from threading import Lock
 
-from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 from pyVmomi import vim
 from retrying import retry
+
+from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 
 from cloudshell.cp.vcenter.common.cloud_shell.conn_details_retriever import (
     ResourceConnectionDetailsRetriever,
