@@ -155,7 +155,7 @@ class EventManager:
                 self.VMOSCustomization.SUCCESS_END_EVENT,
                 self.VMOSCustomization.FAILED_END_EVENT,
                 self.VMOSCustomization.FAILED_UNKNOWN_END_EVENT,
-                self.VMOSCustomization.FAILED_NETWORKING_END_EVENT
+                self.VMOSCustomization.FAILED_NETWORKING_END_EVENT,
             ],
             timeout=timeout,
             wait_time=wait_time,

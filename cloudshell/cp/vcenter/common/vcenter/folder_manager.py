@@ -31,7 +31,9 @@ class FolderManager(object):
             if folder:
                 if not folder.childEntity:
                     result = self.delete_folder(folder, logger)
-                    logger.info(f"Remove result for folder '{folder_full_path}':\n{result}")
+                    logger.info(
+                        f"Remove result for folder '{folder_full_path}':\n{result}"
+                    )
                 else:
                     logger.info(
                         f"Skip folder '{folder_full_path}' deletion. It contains objects: {folder.childEntity}"
