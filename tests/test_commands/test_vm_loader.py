@@ -1,24 +1,29 @@
+import sys
 from unittest import TestCase
 
-from mock import Mock, create_autospec
 from pyVmomi import vim
 
 from cloudshell.cp.vcenter.commands.load_vm import VMLoader
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestCommandOrchestrator(TestCase):
     def setUp(self):
-        self.vc_model = Mock()
+        self.vc_model = MagicMock()
         self.vc_model.default_datacenter = "datacenter"
-        self.pv_service = Mock()
+        self.pv_service = MagicMock()
         self.vm_loader = VMLoader(self.pv_service)
-        self.si = Mock()
+        self.si = MagicMock()
 
     def test_get_vm_uuid(self):
-        vm = Mock(spec=vim.VirtualMachine)
-        vm.config = Mock()
+        vm = MagicMock(spec=vim.VirtualMachine)
+        vm.config = MagicMock()
         vm.config.uuid = "this is the uuid"
-        self.pv_service.find_vm_by_name = Mock(return_value=vm)
+        self.pv_service.find_vm_by_name = MagicMock(return_value=vm)
         path = "raz/abadi\\c"
         res = self.vm_loader.load_vm_uuid_by_name(self.si, self.vc_model, path)
 
@@ -30,10 +35,10 @@ class TestCommandOrchestrator(TestCase):
         )
 
     def test_get_vm_uuid_not_vm(self):
-        vm = Mock()
-        vm.config = Mock()
+        vm = MagicMock()
+        vm.config = MagicMock()
         vm.config.uuid = "this is the uuid"
-        self.pv_service.find_vm_by_name = Mock(return_value=vm)
+        self.pv_service.find_vm_by_name = MagicMock(return_value=vm)
 
         self.assertRaises(
             ValueError,
@@ -45,7 +50,7 @@ class TestCommandOrchestrator(TestCase):
 
     def test_get_vm_uuid_None(self):
         vm = None
-        self.pv_service.find_vm_by_name = Mock(return_value=vm)
+        self.pv_service.find_vm_by_name = MagicMock(return_value=vm)
 
         self.assertRaises(
             ValueError,

@@ -1,10 +1,15 @@
+import sys
 from unittest import TestCase
 
-from mock import MagicMock, Mock, create_autospec
 from pyVmomi import vim
 
 from cloudshell.cp.vcenter.common.vcenter.vmomi_service import pyVmomiService
 from cloudshell.cp.vcenter.network.vnic.vnic_service import VNicService
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, create_autospec
+else:
+    from mock import MagicMock, create_autospec
 
 
 class TestNetwork(TestCase):
@@ -12,10 +17,10 @@ class TestNetwork(TestCase):
         pass
 
     def test_vnic_reconfig_task(self):
-        vm = Mock()
+        vm = MagicMock()
         vm.ReconfigVM_Task = lambda x: isinstance(x, vim.vm.ConfigSpec)
 
-        api_wrapper = pyVmomiService(Mock, Mock(), Mock())
+        api_wrapper = pyVmomiService(MagicMock, MagicMock(), MagicMock())
         res = api_wrapper.vm_reconfig_task(vm, [])
         self.assertTrue(res)
 
@@ -34,66 +39,66 @@ class TestNetwork(TestCase):
         self.assertFalse(VNicService.device_is_attached_to_network(None, None))
 
         network_name = "TEST"
-        device = Mock()
-        device.backing = Mock()
-        device.backing.network = Mock()
+        device = MagicMock()
+        device.backing = MagicMock()
+        device.backing.network = MagicMock()
         device.backing.network.name = network_name
         self.assertTrue(VNicService.device_is_attached_to_network(device, network_name))
 
-        network = Mock(spec=vim.Network)
+        network = MagicMock(spec=vim.Network)
         network.name = "xnet"
-        nicspec = Mock()
+        nicspec = MagicMock()
 
         nicspec.device = device
         res = VNicService.vnic_attach_to_network_standard(
-            nicspec=nicspec, network=network, logger=Mock()
+            nicspec=nicspec, network=network, logger=MagicMock()
         )
         self.assertEqual(res.device.backing.network.name, "xnet")
 
     def test_device_attahed_to_network_distributed(self):
         network_name = "PORT-GROUP"
-        device = Mock()
+        device = MagicMock()
         device.backing = MagicMock()
-        device.backing.port = Mock()
+        device.backing.port = MagicMock()
         hasattr(device.backing, "network")
         del device.backing.network
         device.backing.port.portgroupKey = network_name
         self.assertTrue(VNicService.device_is_attached_to_network(device, network_name))
 
-        port_group = Mock(spec=vim.dvs.DistributedVirtualPortgroup)
+        port_group = MagicMock(spec=vim.dvs.DistributedVirtualPortgroup)
         port_group.key = "group_net"
         port_group.config.distributedVirtualSwitch.uuid = "6686"
-        nicspec = Mock()
+        nicspec = MagicMock()
 
         nicspec.device = device
         res = VNicService.vnic_attach_to_network_distributed(
-            nicspec=nicspec, port_group=port_group, logger=Mock()
+            nicspec=nicspec, port_group=port_group, logger=MagicMock()
         )
         self.assertEqual(res.device.backing.port.portgroupKey, "group_net")
 
     def test_xx(self):
-        vm = Mock()
+        vm = MagicMock()
         vm.ReconfigVM_Task = lambda x: isinstance(x, vim.vm.ConfigSpec)
-        nicspec = Mock()
+        nicspec = MagicMock()
         res = VNicService.vnic_add_to_vm_task(
-            nicspec=nicspec, virtual_machine=vm, logger=Mock()
+            nicspec=nicspec, virtual_machine=vm, logger=MagicMock()
         )
         self.assertIsNone(res)
 
-        # nicspec = Mock(spec=vim.vm.device.VirtualDeviceSpec)
+        # nicspec = MagicMock(spec=vim.vm.device.VirtualDeviceSpec)
         # res = vnic_add_to_vm_task(nicspec, vm)
         # pass
 
     def test_vnic_add_to_vm_task(self):
         # arrange
         nicspec = vim.vm.device.VirtualDeviceSpec()
-        vm = Mock()
-        VNicService.vnic_set_connectivity_status = Mock()
-        pyVmomiService.vm_reconfig_task = Mock()
+        vm = MagicMock()
+        VNicService.vnic_set_connectivity_status = MagicMock()
+        pyVmomiService.vm_reconfig_task = MagicMock()
 
         # act
         res = VNicService.vnic_add_to_vm_task(
-            nicspec=nicspec, virtual_machine=vm, logger=Mock()
+            nicspec=nicspec, virtual_machine=vm, logger=MagicMock()
         )
 
         # assert
@@ -101,25 +106,25 @@ class TestNetwork(TestCase):
         self.assertTrue(pyVmomiService.vm_reconfig_task.called)
 
     def test_set_connectiv(self):
-        nicspec = Mock()
-        nicspec.device = Mock()
+        nicspec = MagicMock()
+        nicspec.device = MagicMock()
         connect_status = True
         nicspec = VNicService.vnic_set_connectivity_status(
-            nicspec=nicspec, is_connected=connect_status, logger=Mock()
+            nicspec=nicspec, is_connected=connect_status, logger=MagicMock()
         )
         self.assertEqual(nicspec.device.connectable.connected, connect_status)
 
     def test_vnic_is_attachet_to_network(self):
-        nicspec = Mock()
-        nicspec.device = Mock()
-        res = VNicService.vnic_is_attachet_to_network(nicspec, Mock())
+        nicspec = MagicMock()
+        nicspec.device = MagicMock()
+        res = VNicService.vnic_is_attachet_to_network(nicspec, MagicMock())
         self.assertFalse(res)
 
     def test_vnic_remove_from_vm_list(self):
         # arrange
         vm = create_autospec(spec=vim.vm)
-        vm.config = Mock()
-        vm.config.hardware = Mock()
+        vm.config = MagicMock()
+        vm.config.hardware = MagicMock()
         vm.config.hardware.device = [
             create_autospec(spec=vim.vm.device.VirtualEthernetCard)
         ]
@@ -132,9 +137,9 @@ class TestNetwork(TestCase):
 
     def test_get_device_spec(self):
         # arrange
-        vnic = Mock()
-        VNicService.create_vnic_spec = Mock()
-        VNicService.set_vnic_connectivity_status = Mock()
+        vnic = MagicMock()
+        VNicService.create_vnic_spec = MagicMock()
+        VNicService.set_vnic_connectivity_status = MagicMock()
 
         # act
         VNicService.get_device_spec(vnic, True)
@@ -147,11 +152,11 @@ class TestNetwork(TestCase):
         # arrange
 
         vm = create_autospec(spec=vim.vm)
-        VNicService.vnic_new_attached_to_network = Mock()
-        # VNicService.vnic_add_to_vm_task = Mock()
+        VNicService.vnic_new_attached_to_network = MagicMock()
+        # VNicService.vnic_add_to_vm_task = MagicMock()
 
         # act
-        VNicService.vnic_add_new_to_vm_task(vm=vm, network=None, logger=Mock())
+        VNicService.vnic_add_new_to_vm_task(vm=vm, network=None, logger=MagicMock())
 
         # assert
         self.assertTrue(VNicService.vnic_new_attached_to_network.called)
@@ -161,10 +166,10 @@ class TestNetwork(TestCase):
         # arrange
         network = create_autospec(spec=vim.dvs.DistributedVirtualPortgroup)
         nicspec = create_autospec(spec=vim.vm.device.VirtualDeviceSpec)
-        VNicService.vnic_attach_to_network_distributed = Mock()
+        VNicService.vnic_attach_to_network_distributed = MagicMock()
 
         # act
-        VNicService.vnic_attached_to_network(nicspec, network, logger=Mock())
+        VNicService.vnic_attached_to_network(nicspec, network, logger=MagicMock())
 
         # assert
         self.assertTrue(VNicService.vnic_attach_to_network_distributed.called)
@@ -173,10 +178,10 @@ class TestNetwork(TestCase):
         # arrange
         network = create_autospec(spec=vim.Network)
         nicspec = create_autospec(spec=vim.vm.device.VirtualDeviceSpec)
-        VNicService.vnic_attach_to_network_standard = Mock()
+        VNicService.vnic_attach_to_network_standard = MagicMock()
 
         # act
-        VNicService.vnic_attached_to_network(nicspec, network, logger=Mock())
+        VNicService.vnic_attached_to_network(nicspec, network, logger=MagicMock())
 
         # assert
         self.assertTrue(VNicService.vnic_attach_to_network_standard.called)

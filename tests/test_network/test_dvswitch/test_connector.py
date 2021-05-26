@@ -1,16 +1,17 @@
+import sys
 from unittest import TestCase
 
-from mock import Mock
 from pyVmomi import vim
 
-from cloudshell.cp.vcenter.common.cloud_shell.conn_details_retriever import (
-    ResourceConnectionDetailsRetriever,
-)
-from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
 from cloudshell.cp.vcenter.common.utilites.common_name import generate_unique_name
 from cloudshell.cp.vcenter.vm.dvswitch_connector import VirtualSwitchToMachineConnector
 from cloudshell.cp.vcenter.vm.portgroup_configurer import *
 from cloudshell.cp.vcenter.vm.vnic_to_network_mapper import VnicToNetworkMapper
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch, create_autospec
+else:
+    from mock import MagicMock, patch, create_autospec
 
 
 class TestVirtualSwitchToMachineConnector(TestCase):
@@ -27,37 +28,39 @@ class TestVirtualSwitchToMachineConnector(TestCase):
         self.dv_switch_name = "dvSwitch-SergiiT"
         self.dv_port_group_name = "aa-dvPortGroup3B"
 
-        self.network = Mock()
+        self.network = MagicMock()
         self.network.key = "network-key"
         self.network.config.distributedVirtualSwitch.uuid = (
             "422254d5-5226-946e-26fb-60c21898b73f"
         )
-        self.py_vmomi_service = Mock()
+        self.py_vmomi_service = MagicMock()
 
-        self.vm = Mock()
-        self.vm.config.hardware = Mock()
-        self.vnic = Mock(spec=vim.vm.device.VirtualEthernetCard)
-        self.vnic.deviceInfo = Mock()
+        self.vm = MagicMock()
+        self.vm.config.hardware = MagicMock()
+        self.vnic = MagicMock(spec=vim.vm.device.VirtualEthernetCard)
+        self.vnic.deviceInfo = MagicMock()
         self.vm.config.hardware.device = [self.vnic]
 
         self.py_vmomi_service.find_by_uuid = lambda a, b, c: self.vm
-        self.py_vmomi_service.find_network_by_name = Mock(return_value=self.network)
+        self.py_vmomi_service.find_network_by_name = MagicMock(
+            return_value=self.network
+        )
 
-        self.synchronous_task_waiter = Mock()
-        self.synchronous_task_waiter.wait_for_task = Mock(return_value="TASK OK")
-        self.si = Mock()
+        self.synchronous_task_waiter = MagicMock()
+        self.synchronous_task_waiter.wait_for_task = MagicMock(return_value="TASK OK")
+        self.si = MagicMock()
 
         name_generator = generate_unique_name
         vnic_to_network_mapper = VnicToNetworkMapper(name_generator)
-        helpers = Mock()
-        cs_retriever_service = Mock()
-        session = Mock()
-        resource_context = Mock()
-        connection_details = Mock()
+        helpers = MagicMock()
+        cs_retriever_service = MagicMock()
+        session = MagicMock()
+        resource_context = MagicMock()
+        connection_details = MagicMock()
 
-        helpers.get_resource_context_details = Mock(return_value=resource_context)
-        helpers.get_api_session = Mock(return_value=session)
-        cs_retriever_service.getVCenterConnectionDetails = Mock(
+        helpers.get_resource_context_details = MagicMock(return_value=resource_context)
+        helpers.get_api_session = MagicMock(return_value=session)
+        cs_retriever_service.getVCenterConnectionDetails = MagicMock(
             return_value=connection_details
         )
 
@@ -65,8 +68,8 @@ class TestVirtualSwitchToMachineConnector(TestCase):
             self.py_vmomi_service,
             self.synchronous_task_waiter,
             vnic_to_network_mapper,
-            Mock(),
-            Mock(),
+            MagicMock(),
+            MagicMock(),
         )
 
         # pyvmomi_service, synchronous_task_waiter, vnic_to_network_mapper, vnic_common
@@ -77,7 +80,7 @@ class TestVirtualSwitchToMachineConnector(TestCase):
         self.connector = VirtualSwitchToMachineConnector(self.creator, self.configurer)
 
     def test_map_vnc(self):
-        network_spec = Mock()
+        network_spec = MagicMock()
         network_spec.dv_port_name = ""
         network_spec.dv_switch_name = ""
         network_spec.dv_switch_path = ""
@@ -85,11 +88,11 @@ class TestVirtualSwitchToMachineConnector(TestCase):
         network_spec.vlan_spec = ""
         mapp = [network_spec]
 
-        self.configurer.connect_vnic_to_networks = Mock(return_value="OK")
-        self.connector.virtual_machine_port_group_configurer.connect_by_mapping = Mock(
-            return_value="OK"
+        self.configurer.connect_vnic_to_networks = MagicMock(return_value="OK")
+        self.connector.virtual_machine_port_group_configurer.connect_by_mapping = (
+            MagicMock(return_value="OK")
         )
-        self.connector.connect_and_get_vm = Mock(
+        self.connector.connect_and_get_vm = MagicMock(
             return_value=(
                 1,
                 1,
@@ -97,19 +100,19 @@ class TestVirtualSwitchToMachineConnector(TestCase):
         )
 
         res = self.connector.connect_by_mapping(
-            self.si, self.vm, [], "default_network", [], Mock(), "True"
+            self.si, self.vm, [], "default_network", [], MagicMock(), "True"
         )
         self.assertEqual(res, "OK")
         res = self.connector.connect_by_mapping(
-            self.si, self.vm, [], None, [], Mock(), "True"
+            self.si, self.vm, [], None, [], MagicMock(), "True"
         )
         self.assertEqual(res, "OK")
 
         res = self.connector.connect_by_mapping(
-            self.si, self.vm, mapp, "default_network", [], Mock(), "True"
+            self.si, self.vm, mapp, "default_network", [], MagicMock(), "True"
         )
         self.assertEqual(res, "OK")
         res = self.connector.connect_by_mapping(
-            self.si, self.vm, mapp, None, [], Mock(), "True"
+            self.si, self.vm, mapp, None, [], MagicMock(), "True"
         )
         self.assertEqual(res, "OK")

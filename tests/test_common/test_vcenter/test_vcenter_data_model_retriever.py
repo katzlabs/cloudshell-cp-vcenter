@@ -1,6 +1,5 @@
+import sys
 import unittest
-
-from mock import Mock, create_autospec
 
 from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
 from cloudshell.cp.vcenter.common.vcenter.data_model_retriever import (
@@ -8,12 +7,17 @@ from cloudshell.cp.vcenter.common.vcenter.data_model_retriever import (
 )
 from cloudshell.cp.vcenter.models.QualiDriverModels import ResourceContextDetails
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, create_autospec
+else:
+    from mock import MagicMock, create_autospec
+
 
 class TestVCenterDataModelRetriever(unittest.TestCase):
     def test_get_vcenter_data_model(self):
         # Arrange
         data_model_retriever = VCenterDataModelRetriever(ResourceModelParser())
-        api = Mock()
+        api = MagicMock()
         vcenter_resource = create_autospec(ResourceContextDetails)
 
         vcenter_resource.model = "VMWare vCenter"
@@ -36,7 +40,7 @@ class TestVCenterDataModelRetriever(unittest.TestCase):
             "saved_sandbox_storage": "",
         }
 
-        api.GetResourceDetails = Mock(return_value=vcenter_resource)
+        api.GetResourceDetails = MagicMock(return_value=vcenter_resource)
 
         # Act
         vcenter_data_model = data_model_retriever.get_vcenter_data_model(
@@ -49,7 +53,7 @@ class TestVCenterDataModelRetriever(unittest.TestCase):
     def test_get_vcenter_data_model_empty_vcenter_name(self):
         # Arrange
         data_model_retriever = VCenterDataModelRetriever(ResourceModelParser())
-        api = Mock()
+        api = MagicMock()
         vcenter_resource = create_autospec(ResourceContextDetails)
 
         vcenter_resource.model = "VMWare vCenter"
@@ -70,7 +74,7 @@ class TestVCenterDataModelRetriever(unittest.TestCase):
             "promiscuous_mode": "",
         }
 
-        api.GetResourceDetails = Mock(return_value=vcenter_resource)
+        api.GetResourceDetails = MagicMock(return_value=vcenter_resource)
 
         # Act + Assert
         self.assertRaises(

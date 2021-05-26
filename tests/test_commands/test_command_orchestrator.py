@@ -1,4 +1,5 @@
 import json
+import sys
 from unittest import TestCase
 
 import jsonpickle
@@ -16,9 +17,14 @@ from cloudshell.shell.core.driver_context import (
     ResourceRemoteCommandContext,
 )
 from freezegun import freeze_time
-from mock import Mock, create_autospec, patch
 
 from cloudshell.cp.vcenter.commands.command_orchestrator import CommandOrchestrator
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch, create_autospec
+else:
+    from mock import MagicMock, patch, create_autospec
+
 
 RESTORE_SNAPSHOT = "cloudshell.cp.vcenter.commands.command_orchestrator.CommandOrchestrator.restore_snapshot"
 SAVE_SNAPSHOT = "cloudshell.cp.vcenter.commands.command_orchestrator.CommandOrchestrator.save_snapshot"
@@ -86,22 +92,22 @@ class TestCommandOrchestrator(TestCase):
             "Reserved Networks": "vlan65",
             "Default Datacenter": "QualiSB",
         }
-        self.context = Mock()
-        session = Mock()
-        remote_resource = Mock()
+        self.context = MagicMock()
+        session = MagicMock()
+        remote_resource = MagicMock()
         remote_resource.fullname = "this is full name of the remote resource"
         remote_resource.uuid = "this is full uuis of the remote resource"
-        self.connection_details = Mock()
+        self.connection_details = MagicMock()
         self.context.resource = self.resource
-        self.context.resource.app_context = Mock()
-        self.context.remote_endpoints = Mock()
+        self.context.resource.app_context = MagicMock()
+        self.context.remote_endpoints = MagicMock()
         self.context.remote_endpoints = [self.resource]
         self.command_orchestrator = CommandOrchestrator()
         self.command_orchestrator.command_wrapper.execute_command_with_connection = (
-            Mock(return_value=DeployAppResult())
+            MagicMock(return_value=DeployAppResult())
         )
-        self.ports = [Mock()]
-        self.command_orchestrator._parse_remote_model = Mock(
+        self.ports = [MagicMock()]
+        self.command_orchestrator._parse_remote_model = MagicMock(
             return_value=remote_resource
         )
 

@@ -1,8 +1,12 @@
+import sys
 from unittest import TestCase
 
-from mock import Mock, patch
-
 from cloudshell.cp.vcenter.commands.retrieve_snapshots import RetrieveSnapshotsCommand
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 
 class TestRetrieveSnapshotCommand(TestCase):
@@ -12,21 +16,21 @@ class TestRetrieveSnapshotCommand(TestCase):
     def test_restore_snapshot_should_success_on_existing_snapshot(
         self, mock_get_vm_snapshots
     ):
-        vm = Mock()
+        vm = MagicMock()
 
-        pyvmomi_service = Mock()
-        pyvmomi_service.find_by_uuid = Mock(return_value=vm)
+        pyvmomi_service = MagicMock()
+        pyvmomi_service.find_by_uuid = MagicMock(return_value=vm)
 
         snapshot_restore_command = RetrieveSnapshotsCommand(
             pyvmomi_service=pyvmomi_service
         )
-        si = Mock()
+        si = MagicMock()
 
-        mock_get_vm_snapshots.return_value = {"snap1": Mock()}
+        mock_get_vm_snapshots.return_value = {"snap1": MagicMock()}
 
         # Act
         snapshots = snapshot_restore_command.get_snapshots(
-            si=si, logger=Mock(), vm_uuid="machine1"
+            si=si, logger=MagicMock(), vm_uuid="machine1"
         )
 
         # Assert

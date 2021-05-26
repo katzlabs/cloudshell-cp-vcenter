@@ -1,13 +1,6 @@
 from unittest import TestCase
 
-from cloudshell.api.cloudshell_api import ResourceAttribute, ResourceInfo
-from cloudshell.helpers.scripts.cloudshell_scripts_helpers import ResourceContextDetails
-from mock import create_autospec
-
 from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
-from cloudshell.cp.vcenter.models.GenericDeployedAppResourceModel import (
-    GenericDeployedAppResourceModel,
-)
 from cloudshell.cp.vcenter.models.VLANAutoResourceModel import VLANAutoResourceModel
 
 

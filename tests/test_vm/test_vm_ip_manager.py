@@ -1,10 +1,15 @@
 import re
+import sys
 from unittest import TestCase
-
-from mock import Mock, patch
 
 from cloudshell.cp.vcenter.commands.ip_result import IpReason, IpResult
 from cloudshell.cp.vcenter.vm.ip_manager import VMIPManager
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 counter = 0
 
@@ -15,12 +20,12 @@ class TestVMIPManager(TestCase):
         self.ip_manager.INTERVAL = 0.001
         self.default_net = "aa"
         self.function = re.compile(".*").match
-        self.cancel = Mock()
+        self.cancel = MagicMock()
         self.cancel.is_cancelled = None
         self.timeout = 1
-        self.logger = Mock()
-        self.vm = Mock()
-        self.vm.guest = Mock()
+        self.logger = MagicMock()
+        self.vm = MagicMock()
+        self.vm.guest = MagicMock()
         self.vm.guest.toolsStatus = "running"
 
     def test_get_match_method_none(self):
@@ -32,8 +37,8 @@ class TestVMIPManager(TestCase):
         self.assertEqual(method, re.compile("1.*").match)
 
     def test_get_ip_toolsNotInstalled(self):
-        vm = Mock()
-        vm.guest = Mock()
+        vm = MagicMock()
+        vm.guest = MagicMock()
         vm.guest.toolsStatus = "toolsNotInstalled"
         self.assertRaises(
             ValueError,
@@ -69,7 +74,7 @@ class TestVMIPManager(TestCase):
 
     def test_get_ip_no_timeout_multi_ip_regex_pattern(self):
         self.vm.guest.ipAddress = "1.1.1.1"
-        nic = Mock()
+        nic = MagicMock()
         nic.network = None
         nic.ipAddress = ["2.2.2.2"]
         self.vm.guest.net = [nic]
@@ -121,7 +126,7 @@ class TestVMIPManager(TestCase):
 
     def test_get_ip_cancelled(self):
         TestVMIPManager.counter = 0
-        cancel = Mock()
+        cancel = MagicMock()
         cancel.is_cancelled = True
 
         res = self.ip_manager.get_ip(

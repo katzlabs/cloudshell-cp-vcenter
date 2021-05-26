@@ -1,7 +1,7 @@
+import sys
 from unittest import TestCase
 
 import jsonpickle
-from mock import Mock
 
 from cloudshell.cp.vcenter.commands.connect_orchestrator import (
     ConnectionCommandOrchestrator,
@@ -14,15 +14,20 @@ from cloudshell.cp.vcenter.network.dvswitch.name_generator import (
 )
 from cloudshell.cp.vcenter.vm.portgroup_configurer import VNicDeviceMapper
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestCommandOrchestrator(TestCase):
     def setUp(self):
         self.portgroup_name = DvPortGroupNameGenerator()
-        self.connector = Mock()
-        self.disconnector = Mock()
-        self.model_parser = Mock()
+        self.connector = MagicMock()
+        self.disconnector = MagicMock()
+        self.model_parser = MagicMock()
 
-        self.vc_data_model = Mock()
+        self.vc_data_model = MagicMock()
         self.vc_data_model.reserved_networks = "restricted_network1,restricted_network2"
         self.vc_data_model.default_dvswitch = "dvSwitch"
         self.vc_data_model.default_network = "Anetwork"
@@ -30,7 +35,7 @@ class TestCommandOrchestrator(TestCase):
         self.vc_data_model.holding_network = "Holding Network"
         self.vc_data_model.promiscuous_mode = "True"
 
-        self.si = Mock()
+        self.si = MagicMock()
 
         self.ConnectionCommandOrchestrator = ConnectionCommandOrchestrator(
             self.connector, self.disconnector, self.model_parser
@@ -40,7 +45,7 @@ class TestCommandOrchestrator(TestCase):
         """
         tests the error by missing dvswitch
         """
-        vc_data_model = Mock()
+        vc_data_model = MagicMock()
         vc_data_model.reserved_networks = "restricted_network1,restricted_network2"
         vc_data_model.default_dvswitch = None
         vc_data_model.default_network = "Anetwork"
@@ -50,7 +55,10 @@ class TestCommandOrchestrator(TestCase):
 
         request, expected = self._get_missing_dv_switch_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
-            si=self.si, logger=Mock(), vcenter_data_model=vc_data_model, request=request
+            si=self.si,
+            logger=MagicMock(),
+            vcenter_data_model=vc_data_model,
+            request=request,
         )
         self._assert_as_expected(results, expected)
 
@@ -61,7 +69,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test1_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -74,7 +82,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test2_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -87,7 +95,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test3_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -102,7 +110,7 @@ class TestCommandOrchestrator(TestCase):
             ValueError,
             self.ConnectionCommandOrchestrator.connect_bulk,
             self.si,
-            Mock(),
+            MagicMock(),
             self.vc_data_model,
             request,
         )
@@ -114,7 +122,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test5_params()
         res = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -127,7 +135,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test6_params()
         res = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -140,7 +148,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test7_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -153,7 +161,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test8_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -166,7 +174,7 @@ class TestCommandOrchestrator(TestCase):
         request, expected = self._get_test9_params()
         results = self.ConnectionCommandOrchestrator.connect_bulk(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             vcenter_data_model=self.vc_data_model,
             request=request,
         )
@@ -215,7 +223,7 @@ class TestCommandOrchestrator(TestCase):
                     network_key="aa",
                 )
                 res.append(r)
-        self.connector.connect_to_networks = Mock(return_value=res)
+        self.connector.connect_to_networks = MagicMock(return_value=res)
 
     def _set_disconnect_from_networks(self, request):
         a = DeployDataHolder(request["driverRequest"])
@@ -226,14 +234,14 @@ class TestCommandOrchestrator(TestCase):
             )
             interface = self._get_interface_name(action)
             r = VNicDeviceMapper(
-                vnic=Mock(),
+                vnic=MagicMock(),
                 requested_vnic=vnic_name,
-                network=Mock(),
+                network=MagicMock(),
                 connect=False,
                 mac=interface,
             )
             res.append(r)
-        self.disconnector.disconnect_from_networks = Mock(return_value=res)
+        self.disconnector.disconnect_from_networks = MagicMock(return_value=res)
 
     def _get_interface_name_for_result(self, action):
         interface_attributes = [
@@ -684,7 +692,7 @@ class TestCommandOrchestrator(TestCase):
                 ]
             }
         }
-        self.disconnector.disconnect_from_networks = Mock()
+        self.disconnector.disconnect_from_networks = MagicMock()
         self.disconnector.disconnect_from_networks.side_effect = ValueError(
             "vnic not found"
         )
@@ -727,7 +735,7 @@ class TestCommandOrchestrator(TestCase):
                 ]
             }
         }
-        self.connector.connect_to_networks = Mock()
+        self.connector.connect_to_networks = MagicMock()
         self.connector.connect_to_networks.side_effect = ValueError("vnic not found")
         expected = self._get_connect_excepted_results(request, "vnic not found")
         # here we don't don't get vnic input input

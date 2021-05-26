@@ -1,6 +1,5 @@
+import sys
 from unittest import TestCase
-
-from mock import Mock
 
 from cloudshell.cp.vcenter.common.model_factory import ResourceModelParser
 from cloudshell.cp.vcenter.models.DeployDataHolder import DeployDataHolder
@@ -21,31 +20,36 @@ from cloudshell.cp.vcenter.models.VMwarevCenterResourceModel import (
 )
 from cloudshell.cp.vcenter.vm.deploy import VirtualMachineDeployer
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestVirtualMachineDeployer(TestCase):
     def setUp(self):
         self.name = "name"
         self.uuid = "uuid"
-        self.name_gen = Mock(return_value=self.name)
-        self.pv_service = Mock()
-        self.si = Mock()
-        self.clone_parmas = Mock()
-        self.clone_res = Mock()
+        self.name_gen = MagicMock(return_value=self.name)
+        self.pv_service = MagicMock()
+        self.si = MagicMock()
+        self.clone_parmas = MagicMock()
+        self.clone_res = MagicMock()
         self.clone_res.error = None
-        self.clone_res.vm = Mock()
-        self.clone_res.vm.summary = Mock()
-        self.clone_res.vm.summary.config = Mock()
+        self.clone_res.vm = MagicMock()
+        self.clone_res.vm.summary = MagicMock()
+        self.clone_res.vm.summary.config = MagicMock()
         self.clone_res.vm.summary.config.uuid = self.uuid
-        self.pv_service.CloneVmParameters = Mock(return_value=self.clone_parmas)
-        self.pv_service.clone_vm = Mock(return_value=self.clone_res)
-        self.image_deployer = Mock()
-        self.image_deployer.deploy_image = Mock(return_value=True)
-        self.vm = Mock()
-        self.vm.config = Mock()
+        self.pv_service.CloneVmParameters = MagicMock(return_value=self.clone_parmas)
+        self.pv_service.clone_vm = MagicMock(return_value=self.clone_res)
+        self.image_deployer = MagicMock()
+        self.image_deployer.deploy_image = MagicMock(return_value=True)
+        self.vm = MagicMock()
+        self.vm.config = MagicMock()
         self.vm.config.uuid = self.uuid
-        self.pv_service.find_vm_by_name = Mock(return_value=self.vm)
+        self.pv_service.find_vm_by_name = MagicMock(return_value=self.vm)
         self.model_parser = ResourceModelParser()
-        self.vm_details_provider = Mock()
+        self.vm_details_provider = MagicMock()
         self.deployer = VirtualMachineDeployer(
             pv_service=self.pv_service,
             name_generator=self.name_gen,
@@ -63,17 +67,17 @@ class TestVirtualMachineDeployer(TestCase):
         )
 
         resource_context = self._create_vcenter_resource_context()
-        cancellation_context = Mock()
+        cancellation_context = MagicMock()
         cancellation_context.is_cancelled = False
 
         res = self.deployer.deploy_from_template(
             si=self.si,
             data_holder=deploy_from_template_details,
             vcenter_data_model=resource_context,
-            app_resource_model=Mock(),
-            logger=Mock(),
-            session=Mock(),
-            reservation_id=Mock(),
+            app_resource_model=MagicMock(),
+            logger=MagicMock(),
+            session=MagicMock(),
+            reservation_id=MagicMock(),
             cancellation_context=cancellation_context,
         )
 
@@ -90,17 +94,17 @@ class TestVirtualMachineDeployer(TestCase):
         )
         deploy_from_template_details.vcenter_vm = "name"
         resource_context = self._create_vcenter_resource_context()
-        reservation_id = Mock()
-        cancellation_context = Mock()
+        reservation_id = MagicMock()
+        cancellation_context = MagicMock()
         cancellation_context.is_cancelled = False
 
         res = self.deployer.deploy_clone_from_vm(
             si=self.si,
             data_holder=deploy_from_template_details,
-            app_resource_model=Mock(),
+            app_resource_model=MagicMock(),
             vcenter_data_model=resource_context,
-            logger=Mock(),
-            session=Mock(),
+            logger=MagicMock(),
+            session=MagicMock(),
             reservation_id=reservation_id,
             cancellation_context=cancellation_context,
         )
@@ -118,17 +122,17 @@ class TestVirtualMachineDeployer(TestCase):
         )
         deploy_from_template_details.vcenter_vm_snapshot = "name/shanpshot"
         resource_context = self._create_vcenter_resource_context()
-        cancellation_context = Mock()
+        cancellation_context = MagicMock()
         cancellation_context.is_cancelled = False
 
         res = self.deployer.deploy_from_linked_clone(
             si=self.si,
             data_holder=deploy_from_template_details,
-            app_resource_model=Mock(),
+            app_resource_model=MagicMock(),
             vcenter_data_model=resource_context,
-            logger=Mock(),
-            session=Mock(),
-            reservation_id=Mock(),
+            logger=MagicMock(),
+            session=MagicMock(),
+            reservation_id=MagicMock(),
             cancellation_context=cancellation_context,
         )
 
@@ -155,10 +159,10 @@ class TestVirtualMachineDeployer(TestCase):
         return vc
 
     def test_vm_deployer_error(self):
-        self.clone_res.error = Mock()
+        self.clone_res.error = MagicMock()
 
-        self.pv_service.CloneVmParameters = Mock(return_value=self.clone_parmas)
-        self.pv_service.clone_vm = Mock(return_value=self.clone_res)
+        self.pv_service.CloneVmParameters = MagicMock(return_value=self.clone_parmas)
+        self.pv_service.clone_vm = MagicMock(return_value=self.clone_res)
         deploy_from_template_details = DeployFromTemplateDetails(
             vCenterVMFromTemplateResourceModel(), "VM Deployment"
         )
@@ -172,13 +176,13 @@ class TestVirtualMachineDeployer(TestCase):
             Exception,
             self.deployer.deploy_from_template,
             self.si,
-            Mock(),
-            Mock(),
+            MagicMock(),
+            MagicMock(),
             deploy_from_template_details,
-            Mock(),
+            MagicMock(),
             vcenter_data_model,
-            Mock(),
-            Mock(),
+            MagicMock(),
+            MagicMock(),
         )
         self.pv_service.CloneVmParameters.assert_called()
 
@@ -208,25 +212,25 @@ class TestVirtualMachineDeployer(TestCase):
             }
         )
 
-        connectivity = Mock()
+        connectivity = MagicMock()
         connectivity.address = "vcenter ip or name"
         connectivity.user = "user"
         connectivity.password = "password"
-        session = Mock()
-        vcenter_data_model = Mock()
+        session = MagicMock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.default_datacenter = "qualisb"
-        resource_context = Mock()
-        cancellation_context = Mock()
+        resource_context = MagicMock()
+        cancellation_context = MagicMock()
         cancellation_context.is_cancelled = False
 
         res = self.deployer.deploy_from_image(
             si=self.si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
             vcenter_data_model=vcenter_data_model,
             data_holder=params,
             resource_context=resource_context,
-            reservation_id=Mock(),
+            reservation_id=MagicMock(),
             cancellation_context=cancellation_context,
         )
 
@@ -234,7 +238,7 @@ class TestVirtualMachineDeployer(TestCase):
         self.assertEqual(res.vmUuid, self.uuid)
 
     def test_vm_deployer_image_no_res(self):
-        self.image_deployer.deploy_image = Mock(return_value=None)
+        self.image_deployer.deploy_image = MagicMock(return_value=None)
         params = DeployDataHolder(
             {
                 "image_url": "c:\image.ovf",
@@ -248,7 +252,7 @@ class TestVirtualMachineDeployer(TestCase):
             }
         )
 
-        connectivity = Mock()
+        connectivity = MagicMock()
         connectivity.address = "vcenter ip or name"
         connectivity.user = "user"
         connectivity.password = "password"
@@ -258,7 +262,7 @@ class TestVirtualMachineDeployer(TestCase):
         )
 
     def test_vm_deployer_image_no_vm(self):
-        self.pv_service.find_vm_by_name = Mock(return_value=None)
+        self.pv_service.find_vm_by_name = MagicMock(return_value=None)
         params = DeployDataHolder(
             {
                 "image_url": "c:\image.ovf",
@@ -272,7 +276,7 @@ class TestVirtualMachineDeployer(TestCase):
             }
         )
 
-        connectivity = Mock()
+        connectivity = MagicMock()
         connectivity.address = "vcenter ip or name"
         connectivity.user = "user"
         connectivity.password = "password"

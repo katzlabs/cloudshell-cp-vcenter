@@ -1,8 +1,12 @@
+import sys
 import unittest
 
-from mock import Mock
-
 from cloudshell.cp.vcenter.common.vcenter.vm_snapshots import SnapshotRetriever
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
 
 
 class TestSnapshotRetriever(unittest.TestCase):
@@ -12,7 +16,7 @@ class TestSnapshotRetriever(unittest.TestCase):
 
     def test_empty_dict_when_vm_has_no_snapshots(self):
         # Arrange
-        vm = Mock()
+        vm = MagicMock()
         vm.snapshot = None
 
         # Act
@@ -23,12 +27,12 @@ class TestSnapshotRetriever(unittest.TestCase):
 
     def test_one_snapshot_when_one_snapshot_exists(self):
         # Arrange
-        snapshot = Mock()
+        snapshot = MagicMock()
         snapshot.name = "snap1"
         snapshot.childSnapshotList = []
 
-        vm = Mock()
-        vm.snapshot = Mock()
+        vm = MagicMock()
+        vm.snapshot = MagicMock()
         vm.snapshot.rootSnapshotList = [snapshot]
 
         # Act
@@ -39,16 +43,16 @@ class TestSnapshotRetriever(unittest.TestCase):
 
     def test_two_snapshots_when_root_snapshot_has_a_child(self):
         # Arrange
-        child = Mock()
+        child = MagicMock()
         child.name = "child"
         child.childSnapshotList = []
 
-        root = Mock()
+        root = MagicMock()
         root.name = "root"
         root.childSnapshotList = [child]
 
-        vm = Mock()
-        vm.snapshot = Mock()
+        vm = MagicMock()
+        vm.snapshot = MagicMock()
         vm.snapshot.rootSnapshotList = [root]
 
         # Act
@@ -66,7 +70,7 @@ class TestSnapshotRetriever(unittest.TestCase):
 
     def test_cet_current_snapshot_returns_none_when_no_snapshot_exists(self):
         # Arrange
-        vm = Mock()
+        vm = MagicMock()
         vm.snapshot = None
 
         # Act

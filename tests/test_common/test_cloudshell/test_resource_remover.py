@@ -1,21 +1,24 @@
+import sys
 from unittest import TestCase
-
-from mock import Mock
 
 from cloudshell.cp.vcenter.common.cloud_shell.resource_remover import (
     CloudshellResourceRemover,
 )
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestResourceRemover(TestCase):
     def test_resource_remover(self):
         # assert
-        helpers = Mock()
-        session = Mock()
+        session = MagicMock()
         to_remove = "remove this"
 
-        session.DeleteResource = Mock(return_value=True)
-        session = Mock(return_value=session)
+        session.DeleteResource = MagicMock(return_value=True)
+        session = MagicMock(return_value=session)
         resource_remmover = CloudshellResourceRemover()
 
         # act

@@ -1,8 +1,5 @@
-﻿import os
-import sys
+﻿import sys
 import unittest
-
-from mock import Mock
 
 from cloudshell.cp.vcenter.commands.deploy_vm import DeployCommand
 from cloudshell.cp.vcenter.models.DeployFromTemplateDetails import (
@@ -12,13 +9,18 @@ from cloudshell.cp.vcenter.models.vCenterVMFromTemplateResourceModel import (
     vCenterVMFromTemplateResourceModel,
 )
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestDeployFromTemplateCommand(unittest.TestCase):
     def test_deploy_execute(self):
         # arrange
-        deployer = Mock()
-        si = Mock()
-        template_model = Mock()
+        deployer = MagicMock()
+        si = MagicMock()
+        template_model = MagicMock()
 
         deploy_res = dict()
         deploy_res["vm_path"] = "path"
@@ -27,7 +29,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         template_model.template_name = "temp name"
         template_model.vm_folder = "temp folder"
-        deployer.deploy_from_template = Mock(return_value=deploy_res)
+        deployer.deploy_from_template = MagicMock(return_value=deploy_res)
 
         template_resource_model = vCenterVMFromTemplateResourceModel()
 
@@ -37,11 +39,11 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         deploy_command = DeployCommand(deployer)
 
-        resource_context = Mock()
-        logger = Mock()
-        session = Mock()
-        app_resource_model = Mock()
-        vcenter_data_model = Mock()
+        resource_context = MagicMock()
+        logger = MagicMock()
+        session = MagicMock()
+        app_resource_model = MagicMock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.default_datacenter = "QualiSB"
         vcenter_data_model.vm_location = "TargetFolder"
         reservation_id = "4228128c-fb7e-9b0e-60b8-c3fabd3c624e"
@@ -57,7 +59,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
             vcenter_data_model=vcenter_data_model,
             reservation_id=reservation_id,
             cancellation_context=cancellation_context,
-            folder_manager=Mock(),
+            folder_manager=MagicMock(),
         )
 
         # assert
@@ -74,25 +76,25 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
         )
 
     def test_deploy_image_execute(self):
-        deployer = Mock()
-        si = Mock()
-        deployment_params = Mock()
+        deployer = MagicMock()
+        si = MagicMock()
+        deployment_params = MagicMock()
         deployment_params.template_resource_model.vm_location = "SomeFolder"
 
-        connectivity = Mock()
-        res = Mock()
-        deployer.deploy_from_image = Mock(return_value=res)
-        session = Mock()
-        vcenter_data_model = Mock()
+        connectivity = MagicMock()
+        res = MagicMock()
+        deployer.deploy_from_image = MagicMock(return_value=res)
+        session = MagicMock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.default_datacenter = "QualiSB"
-        logger = Mock()
+        logger = MagicMock()
         reservation_id = "4228128c-fb7e-9b0e-60b8-c3fabd3c624e"
 
         deploy_command = DeployCommand(deployer)
         cancellation_context = object()
 
         # act
-        folder_manager = Mock()
+        folder_manager = MagicMock()
         result = deploy_command.execute_deploy_from_image(
             si=si,
             logger=logger,
@@ -120,9 +122,9 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
     def test_deploy_clone_execute(self):
         # arrange
-        deployer = Mock()
-        si = Mock()
-        template_model = Mock()
+        deployer = MagicMock()
+        si = MagicMock()
+        template_model = MagicMock()
 
         deploy_res = dict()
         deploy_res["vm_path"] = "path"
@@ -131,14 +133,14 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         template_model.template_name = "temp name"
         template_model.vm_folder = "temp folder"
-        deployer.deploy_from_template = Mock(return_value=deploy_res)
+        deployer.deploy_from_template = MagicMock(return_value=deploy_res)
 
         reservation_id = "4228128c-fb7e-9b0e-60b8-c3fabd3c624e"
-        logger = Mock()
-        session = Mock()
-        app_resource_model = Mock()
+        logger = MagicMock()
+        session = MagicMock()
+        app_resource_model = MagicMock()
 
-        vcenter_data_model = Mock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.default_datacenter = "QualiSB"
         vcenter_data_model.vm_location = "TargetFolder"
 
@@ -150,7 +152,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         deploy_command = DeployCommand(deployer)
 
-        resource_context = Mock()
+        resource_context = MagicMock()
         cancellation_context = object()
 
         # act
@@ -163,7 +165,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
             deployment_params=deploy_params,
             reservation_id=reservation_id,
             cancellation_context=cancellation_context,
-            folder_manager=Mock(),
+            folder_manager=MagicMock(),
         )
 
         # assert
@@ -181,9 +183,9 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
     def test_deploy_snapshot_execute(self):
         # arrange
-        deployer = Mock()
-        si = Mock()
-        template_model = Mock()
+        deployer = MagicMock()
+        si = MagicMock()
+        template_model = MagicMock()
 
         deploy_res = dict()
         deploy_res["vm_path"] = "path"
@@ -192,7 +194,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         template_model.template_name = "temp name"
         template_model.vm_folder = "temp folder"
-        deployer.deploy_from_template = Mock(return_value=deploy_res)
+        deployer.deploy_from_template = MagicMock(return_value=deploy_res)
 
         template_resource_model = vCenterVMFromTemplateResourceModel()
 
@@ -202,15 +204,15 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
 
         deploy_command = DeployCommand(deployer)
 
-        resource_context = Mock()
-        logger = Mock()
-        vcenter_data_model = Mock()
+        resource_context = MagicMock()
+        logger = MagicMock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.default_datacenter = "QualiSB"
         vcenter_data_model.vm_location = "TargetFolder"
         reservation_id = "4228128c-fb7e-9b0e-60b8-c3fabd3c624e"
         cancellation_context = object()
-        session = Mock()
-        app_resource_model = Mock()
+        session = MagicMock()
+        app_resource_model = MagicMock()
 
         # act
         result = deploy_command.execute_deploy_from_linked_clone(
@@ -222,7 +224,7 @@ class TestDeployFromTemplateCommand(unittest.TestCase):
             app_resource_model=app_resource_model,
             reservation_id=reservation_id,
             cancellation_context=cancellation_context,
-            folder_manager=Mock(),
+            folder_manager=MagicMock(),
         )
 
         # assert

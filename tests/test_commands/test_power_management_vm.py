@@ -1,33 +1,40 @@
+import sys
 from unittest import TestCase
 
-from mock import Mock
 from pyVmomi import vim
 
 from cloudshell.cp.vcenter.commands.power_manager_vm import (
     VirtualMachinePowerManagementCommand,
 )
 
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 
 class TestVirtualMachinePowerManagementCommand(TestCase):
     def test_power_off_already(self):
         vm_uuid = "uuid"
-        si = Mock(spec=vim.ServiceInstance)
-        vm = Mock(spec=vim.VirtualMachine)
-        vm.summary = Mock()
-        vm.summary.runtime = Mock()
+        si = MagicMock(spec=vim.ServiceInstance)
+        vm = MagicMock(spec=vim.VirtualMachine)
+        vm.summary = MagicMock()
+        vm.summary.runtime = MagicMock()
         vm.summary.runtime.powerState = "poweredOff"
-        session = Mock()
-        pv_service = Mock()
-        pv_service.find_by_uuid = Mock(return_value=vm)
+        session = MagicMock()
+        pv_service = MagicMock()
+        pv_service.find_by_uuid = MagicMock(return_value=vm)
 
-        power_manager = VirtualMachinePowerManagementCommand(pv_service, Mock(), Mock())
+        power_manager = VirtualMachinePowerManagementCommand(
+            pv_service, MagicMock(), MagicMock()
+        )
 
         # act
         res = power_manager.power_off(
             si=si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
-            vcenter_data_model=Mock(),
+            vcenter_data_model=MagicMock(),
             vm_uuid=vm_uuid,
             resource_fullname=None,
         )
@@ -38,21 +45,23 @@ class TestVirtualMachinePowerManagementCommand(TestCase):
 
     def test_power_on_already(self):
         vm_uuid = "uuid"
-        si = Mock(spec=vim.ServiceInstance)
-        vm = Mock(spec=vim.VirtualMachine)
-        vm.summary = Mock()
-        vm.summary.runtime = Mock()
+        si = MagicMock(spec=vim.ServiceInstance)
+        vm = MagicMock(spec=vim.VirtualMachine)
+        vm.summary = MagicMock()
+        vm.summary.runtime = MagicMock()
         vm.summary.runtime.powerState = "poweredOn"
-        session = Mock()
-        pv_service = Mock()
-        pv_service.find_by_uuid = Mock(return_value=vm)
+        session = MagicMock()
+        pv_service = MagicMock()
+        pv_service.find_by_uuid = MagicMock(return_value=vm)
 
-        power_manager = VirtualMachinePowerManagementCommand(pv_service, Mock(), Mock())
+        power_manager = VirtualMachinePowerManagementCommand(
+            pv_service, MagicMock(), MagicMock()
+        )
 
         # act
         res = power_manager.power_on(
             si=si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
             vm_uuid=vm_uuid,
             resource_fullname=None,
@@ -65,27 +74,27 @@ class TestVirtualMachinePowerManagementCommand(TestCase):
     def test_power_on(self):
         # arrange
         vm_uuid = "uuid"
-        si = Mock(spec=vim.ServiceInstance)
-        vm = Mock(spec=vim.VirtualMachine)
-        session = Mock()
-        pv_service = Mock()
-        pv_service.find_by_uuid = Mock(return_value=vm)
+        si = MagicMock(spec=vim.ServiceInstance)
+        vm = MagicMock(spec=vim.VirtualMachine)
+        session = MagicMock()
+        pv_service = MagicMock()
+        pv_service.find_by_uuid = MagicMock(return_value=vm)
 
-        task = Mock()
+        task = MagicMock()
 
-        vm.PowerOn = Mock(return_value=task)
+        vm.PowerOn = MagicMock(return_value=task)
 
-        synchronous_task_waiter = Mock()
-        synchronous_task_waiter.wait_for_task = Mock(return_value=True)
+        synchronous_task_waiter = MagicMock()
+        synchronous_task_waiter.wait_for_task = MagicMock(return_value=True)
 
         power_manager = VirtualMachinePowerManagementCommand(
-            pv_service, synchronous_task_waiter, Mock()
+            pv_service, synchronous_task_waiter, MagicMock()
         )
 
         # act
         res = power_manager.power_on(
             si=si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
             vm_uuid=vm_uuid,
             resource_fullname=None,
@@ -100,30 +109,30 @@ class TestVirtualMachinePowerManagementCommand(TestCase):
         # arrange
         vcenter_name = "vcenter name"
         vm_uuid = "uuid"
-        session = Mock()
-        si = Mock(spec=vim.ServiceInstance)
-        vm = Mock(spec=vim.VirtualMachine)
-        task = Mock()
-        pv_service = Mock()
-        pv_service.find_by_uuid = Mock(return_value=vm)
+        session = MagicMock()
+        si = MagicMock(spec=vim.ServiceInstance)
+        vm = MagicMock(spec=vim.VirtualMachine)
+        task = MagicMock()
+        pv_service = MagicMock()
+        pv_service.find_by_uuid = MagicMock(return_value=vm)
 
-        vm.PowerOff = Mock(return_value=task)
+        vm.PowerOff = MagicMock(return_value=task)
 
-        synchronous_task_waiter = Mock()
-        synchronous_task_waiter.wait_for_task = Mock(return_value=True)
+        synchronous_task_waiter = MagicMock()
+        synchronous_task_waiter.wait_for_task = MagicMock(return_value=True)
 
         power_manager = VirtualMachinePowerManagementCommand(
-            pv_service, synchronous_task_waiter, Mock()
+            pv_service, synchronous_task_waiter, MagicMock()
         )
-        power_manager._connect_to_vcenter = Mock(return_value=si)
-        power_manager._get_vm = Mock(return_value=vm)
+        power_manager._connect_to_vcenter = MagicMock(return_value=si)
+        power_manager._get_vm = MagicMock(return_value=vm)
 
-        vcenter = Mock()
+        vcenter = MagicMock()
         vcenter.shutdown_method = "soft"
         # act
         res = power_manager.power_off(
             si=si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
             vcenter_data_model=vcenter,
             vm_uuid=vm_uuid,
@@ -141,30 +150,30 @@ class TestVirtualMachinePowerManagementCommand(TestCase):
         # arrange
         vcenter_name = "vcenter name"
         vm_uuid = "uuid"
-        session = Mock()
-        si = Mock(spec=vim.ServiceInstance)
-        vm = Mock(spec=vim.VirtualMachine)
-        task = Mock()
-        pv_service = Mock()
-        pv_service.find_by_uuid = Mock(return_value=vm)
+        session = MagicMock()
+        si = MagicMock(spec=vim.ServiceInstance)
+        vm = MagicMock(spec=vim.VirtualMachine)
+        task = MagicMock()
+        pv_service = MagicMock()
+        pv_service.find_by_uuid = MagicMock(return_value=vm)
 
-        vm.PowerOff = Mock(return_value=task)
+        vm.PowerOff = MagicMock(return_value=task)
 
-        synchronous_task_waiter = Mock()
-        synchronous_task_waiter.wait_for_task = Mock(return_value=True)
+        synchronous_task_waiter = MagicMock()
+        synchronous_task_waiter.wait_for_task = MagicMock(return_value=True)
 
         power_manager = VirtualMachinePowerManagementCommand(
-            pv_service, synchronous_task_waiter, Mock()
+            pv_service, synchronous_task_waiter, MagicMock()
         )
-        power_manager._connect_to_vcenter = Mock(return_value=si)
-        power_manager._get_vm = Mock(return_value=vm)
+        power_manager._connect_to_vcenter = MagicMock(return_value=si)
+        power_manager._get_vm = MagicMock(return_value=vm)
 
-        vcenter = Mock()
+        vcenter = MagicMock()
         vcenter.shutdown_method = "hard"
         # act
         res = power_manager.power_off(
             si=si,
-            logger=Mock(),
+            logger=MagicMock(),
             session=session,
             vcenter_data_model=vcenter,
             vm_uuid=vm_uuid,

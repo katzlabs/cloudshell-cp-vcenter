@@ -1,16 +1,21 @@
+import sys
 import unittest
 import urllib.error
 import urllib.parse
 import urllib.request
-
-from mock import Mock, patch
 
 from cloudshell.cp.vcenter.common.vcenter.ovf_service import OvfImageDeployerService
 from cloudshell.cp.vcenter.models.VCenterConnectionDetails import (
     VCenterConnectionDetails,
 )
 
-PROCESS = Mock()
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
+
+PROCESS = MagicMock()
 
 
 class ProccesMock:
@@ -24,7 +29,7 @@ class ProccesMock:
 class TestOvfImageService(unittest.TestCase):
     @patch("subprocess.Popen", ProccesMock.Popen)
     def test_deploy_image_success(self):
-        PROCESS.communicate = Mock(return_value=["Completed successfully"])
+        PROCESS.communicate = MagicMock(return_value=["Completed successfully"])
         expected_args = [
             "dummypath/ovftool.exe",
             "--noSSLVerify",
@@ -38,7 +43,7 @@ class TestOvfImageService(unittest.TestCase):
             "vi://vcenter%20user:password%20to%20vcenter@venter.host.com/QualiSB/host/QualiSB%20Cluster/Resources/LiverPool",
         ]
         ovf = OvfImageDeployerService("dummypath/ovftool.exe")
-        image_params = Mock()
+        image_params = MagicMock()
         image_params.connectivity = VCenterConnectionDetails(
             "venter.host.com", "vcenter user", "password to vcenter"
         )
@@ -54,12 +59,12 @@ class TestOvfImageService(unittest.TestCase):
         image_params.image_url = "http://192.168.65.88/ovf/Debian 64 - Yoav.ovf"
         image_params.user_arguments = '--vlan="anetwork"'
 
-        vcenter_data_model = Mock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.ovf_tool_path = "dummypath/ovftool.exe"
 
-        ovf._validate_url_exists = Mock(return_value=True)
+        ovf._validate_url_exists = MagicMock(return_value=True)
 
-        res = ovf.deploy_image(vcenter_data_model, image_params, logger=Mock())
+        res = ovf.deploy_image(vcenter_data_model, image_params, logger=MagicMock())
 
         self.assertTrue(res)
         self.assertEqual(PROCESS.args, expected_args)
@@ -68,9 +73,9 @@ class TestOvfImageService(unittest.TestCase):
     @patch("subprocess.Popen", ProccesMock.Popen)
     def test_deploy_image_no_communication(self):
 
-        PROCESS.communicate = Mock(return_value=None)
+        PROCESS.communicate = MagicMock(return_value=None)
         ovf = OvfImageDeployerService("dummypath/ovftool.exe")
-        image_params = Mock()
+        image_params = MagicMock()
         image_params.connectivity = VCenterConnectionDetails(
             "venter.host.com", "vcenter user", "password to vcenter"
         )
@@ -80,22 +85,21 @@ class TestOvfImageService(unittest.TestCase):
         image_params.vm_name = "raz_deploy_image_integration_test"
         image_params.resource_pool = "LiverPool"
         image_params.datastore = "aa"
-        # image_params.image_url = "C:\\images\\test\\OVAfile121_QS\\OVAfile121_QS.ovf"
         image_params.image_url = "http://192.168.65.88/ovf/Debian 64 - Yoav.ovf"
         image_params.user_arguments = '--vlan="anetwork"'
 
-        vcenter_data_model = Mock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.ovf_tool_path = "dummypath/ovftool.exe"
-        ovf._validate_url_exists = Mock(return_value=True)
+        ovf._validate_url_exists = MagicMock(return_value=True)
 
         self.assertRaises(Exception, ovf.deploy_image, vcenter_data_model, image_params)
 
     @patch("subprocess.Popen", ProccesMock.Popen)
     def test_deploy_image_error(self):
 
-        PROCESS.communicate = Mock(return_value=["error"])
+        PROCESS.communicate = MagicMock(return_value=["error"])
         ovf = OvfImageDeployerService("dummypath/ovftool.exe")
-        image_params = Mock()
+        image_params = MagicMock()
         image_params.connectivity = VCenterConnectionDetails(
             "venter.host.com", "vcenter user", "password to vcenter"
         )
@@ -104,18 +108,17 @@ class TestOvfImageService(unittest.TestCase):
         image_params.resource_pool = "LiverPool"
         image_params.vm_name = "raz_deploy_image_integration_test"
         image_params.datastore = "aa"
-        # image_params.image_url = "C:\\images\\test\\OVAfile121_QS\\OVAfile121_QS.ovf"
         image_params.image_url = "http://192.168.65.88/ovf/Debian 64 - Yoav.ovf"
 
         image_params.user_arguments = '--vlan="anetwork"'
 
-        ovf._validate_url_exists = Mock(return_value=True)
+        ovf._validate_url_exists = MagicMock(return_value=True)
 
-        vcenter_data_model = Mock()
+        vcenter_data_model = MagicMock()
         vcenter_data_model.ovf_tool_path = "dummypath/ovftool.exe"
 
         try:
-            ovf.deploy_image(vcenter_data_model, image_params, logger=Mock())
+            ovf.deploy_image(vcenter_data_model, image_params, logger=MagicMock())
             # should not reach here
             self.assertTrue(False)
         except Exception as inst:
