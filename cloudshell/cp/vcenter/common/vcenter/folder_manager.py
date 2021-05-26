@@ -27,13 +27,15 @@ class FolderManager(object):
                     self.locks[folder_full_path] = Lock()
 
         with self.locks[folder_full_path]:
-            if not folder.childEntity:
-                result = self.delete_folder(folder, logger)
-                logger.info(f"Remove result for folder '{folder_full_path}':\n{result}")
-            else:
-                logger.info(
-                    f"Skip folder '{folder_full_path}' deletion. It contains objects: {folder.childEntity}"
-                )
+            folder = self.pv_service.get_folder(si, folder_full_path)
+            if folder:
+                if not folder.childEntity:
+                    result = self.delete_folder(folder, logger)
+                    logger.info(f"Remove result for folder '{folder_full_path}':\n{result}")
+                else:
+                    logger.info(
+                        f"Skip folder '{folder_full_path}' deletion. It contains objects: {folder.childEntity}"
+                    )
 
     def delete_folder_with_vm_power_off(self, si, logger, folder_full_path):
         logger.info(

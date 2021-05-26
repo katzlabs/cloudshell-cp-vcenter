@@ -9,6 +9,8 @@ class EventManager:
         START_EVENT = "CustomizationStartedEvent"
         SUCCESS_END_EVENT = "CustomizationSucceeded"
         FAILED_END_EVENT = "CustomizationFailed"
+        FAILED_NETWORKING_END_EVENT = "CustomizationNetworkSetupFailed"
+        FAILED_UNKNOWN_END_EVENT = "CustomizationUnkownFailure"
         START_EVENT_TIMEOUT = 5 * 60
         END_EVENT_TIMEOUT = 20 * 60
         START_EVENT_WAIT_TIME = 10
@@ -152,6 +154,8 @@ class EventManager:
             event_type_id_list=[
                 self.VMOSCustomization.SUCCESS_END_EVENT,
                 self.VMOSCustomization.FAILED_END_EVENT,
+                self.VMOSCustomization.FAILED_UNKNOWN_END_EVENT,
+                self.VMOSCustomization.FAILED_NETWORKING_END_EVENT
             ],
             timeout=timeout,
             wait_time=wait_time,

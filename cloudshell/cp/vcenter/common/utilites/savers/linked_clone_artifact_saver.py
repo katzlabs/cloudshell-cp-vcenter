@@ -24,13 +24,13 @@ VM_FROM_LINKED_CLONE_DEPLOYMENT_PATH = (
     "VMware vCenter Cloud Provider 2G.vCenter VM From Linked Clone 2G"
 )
 ATTRIBUTES_TO_IGNORE = [
-    Attribute("Customization Spec", ""),
-    Attribute("Private IP", ""),
-    Attribute("CPU", ""),
-    Attribute("RAM", ""),
-    Attribute("Hostname", ""),
-    Attribute("HDD", ""),
-]
+            Attribute("Customization Spec", ""),
+            Attribute("Private IP", ""),
+            Attribute("CPU", ""),
+            Attribute("RAM", ""),
+            Attribute("Hostname", ""),
+            Attribute("HDD", ""),
+        ]
 
 
 class LinkedCloneArtifactHandler(object):
@@ -102,7 +102,12 @@ class LinkedCloneArtifactHandler(object):
                     thread_id, data_holder.template_resource_model.vcenter_vm
                 )
             )
-
+            data_holder.template_resource_model.cpu = ""
+            data_holder.template_resource_model.ram = ""
+            data_holder.template_resource_model.hdd = ""
+            data_holder.template_resource_model.customization_spec = ""
+            data_holder.template_resource_model.private_ip = ""
+            data_holder.template_resource_model.hostname = ""
             result = self.deployer.deploy_clone_from_vm(
                 self.si,
                 self.logger,
