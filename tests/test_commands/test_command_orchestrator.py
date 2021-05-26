@@ -3,6 +3,8 @@ import sys
 from unittest import TestCase
 
 import jsonpickle
+from freezegun import freeze_time
+
 from cloudshell.api.cloudshell_api import ResourceInfo
 from cloudshell.cp.core.models import (
     AppResourceInfo,
@@ -16,14 +18,13 @@ from cloudshell.shell.core.driver_context import (
     ResourceContextDetails,
     ResourceRemoteCommandContext,
 )
-from freezegun import freeze_time
 
 from cloudshell.cp.vcenter.commands.command_orchestrator import CommandOrchestrator
 
 if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch, create_autospec
+    from unittest.mock import MagicMock, create_autospec, patch
 else:
-    from mock import MagicMock, patch, create_autospec
+    from mock import MagicMock, create_autospec, patch
 
 
 RESTORE_SNAPSHOT = "cloudshell.cp.vcenter.commands.command_orchestrator.CommandOrchestrator.restore_snapshot"

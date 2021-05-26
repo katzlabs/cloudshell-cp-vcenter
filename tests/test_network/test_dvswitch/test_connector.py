@@ -9,9 +9,9 @@ from cloudshell.cp.vcenter.vm.portgroup_configurer import *
 from cloudshell.cp.vcenter.vm.vnic_to_network_mapper import VnicToNetworkMapper
 
 if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch, create_autospec
+    from unittest.mock import MagicMock, create_autospec, patch
 else:
-    from mock import MagicMock, patch, create_autospec
+    from mock import MagicMock, create_autospec, patch
 
 
 class TestVirtualSwitchToMachineConnector(TestCase):

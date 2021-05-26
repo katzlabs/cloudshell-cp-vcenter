@@ -11,9 +11,9 @@ from cloudshell.shell.core.driver_context import (
 from cloudshell.cp.vcenter.common.wrappers.command_wrapper import CommandWrapper
 
 if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch, create_autospec
+    from unittest.mock import MagicMock, create_autospec, patch
 else:
-    from mock import MagicMock, patch, create_autospec
+    from mock import MagicMock, create_autospec, patch
 
 
 class TestCommandWrapper(TestCase):

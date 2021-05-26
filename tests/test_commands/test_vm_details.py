@@ -1,12 +1,13 @@
 import sys
 from unittest import TestCase
 
+from pyVmomi import vim
+
 from cloudshell.cp.core.models import (
     VmDetailsData,
     VmDetailsNetworkInterface,
     VmDetailsProperty,
 )
-from pyVmomi import vim
 
 from cloudshell.cp.vcenter.commands.vm_details import VmDetailsCommand
 from cloudshell.cp.vcenter.vm.ip_manager import VMIPManager

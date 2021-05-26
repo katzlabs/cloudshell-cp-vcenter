@@ -1,9 +1,8 @@
-﻿from cloudshell.cp.vcenter.models.DeployFromImageDetails import DeployFromImageDetails
-
-from os.path import normpath
+﻿from os.path import normpath
 
 from cloudshell.cp.vcenter.common.vcenter.vm_location import VMLocation
 from cloudshell.cp.vcenter.constants import DEPLOYED_APPS_FOLDER
+from cloudshell.cp.vcenter.models.DeployFromImageDetails import DeployFromImageDetails
 from cloudshell.cp.vcenter.models.DeployFromTemplateDetails import (
     DeployFromTemplateDetails,
 )

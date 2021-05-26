@@ -1,12 +1,13 @@
 import ipaddress
 import re
 
+from pyVmomi import vim
+
 from cloudshell.cp.core.models import (
     VmDetailsData,
     VmDetailsNetworkInterface,
     VmDetailsProperty,
 )
-from pyVmomi import vim
 
 from cloudshell.cp.vcenter.common.vcenter.vmomi_service import pyVmomiService
 from cloudshell.cp.vcenter.network.vnic.vnic_service import VNicService

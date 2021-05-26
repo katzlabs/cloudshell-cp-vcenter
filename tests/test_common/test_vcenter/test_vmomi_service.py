@@ -1,5 +1,5 @@
-﻿import unittest
-import sys
+﻿import sys
+import unittest
 from datetime import datetime
 
 from pyVim.connect import Disconnect, SmartConnect

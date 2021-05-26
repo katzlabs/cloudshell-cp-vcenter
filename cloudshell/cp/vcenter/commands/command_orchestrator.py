@@ -2,8 +2,9 @@ import time
 from datetime import datetime
 
 import jsonpickle
-from cloudshell.cp.core.models import DeployApp, DeployAppResult, SaveApp, SaveAppResult
 from pyVim.connect import Disconnect, SmartConnect
+
+from cloudshell.cp.core.models import DeployApp, DeployAppResult, SaveApp, SaveAppResult
 
 from cloudshell.cp.vcenter import constants
 from cloudshell.cp.vcenter.commands.cluster_usage import GetClusterUsageCommand
