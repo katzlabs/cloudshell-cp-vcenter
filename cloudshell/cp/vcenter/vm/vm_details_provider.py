@@ -85,6 +85,11 @@ class VmDetailsProvider(object):
             )
         )
         data.append(
+            VmDetailsProperty(
+                key="Hostname", value=vm.guest.hostName
+            )
+        )
+        data.append(
             VmDetailsProperty(key="Guest OS", value=vm.summary.config.guestFullName)
         )
         data.append(

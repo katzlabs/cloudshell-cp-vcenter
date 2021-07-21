@@ -82,6 +82,11 @@ class VirtualMachineDeployer(object):
 
         template_resource_model = data_holder.template_resource_model
 
+        if template_resource_model.hdd:
+            logger.warning("Deploy from linked clone doesn't support changes to HDD."
+                           "HDD attribute will be ignored.")
+            template_resource_model.hdd = ""
+
         return self._deploy_a_clone(
             si=si,
             logger=logger,
@@ -265,6 +270,7 @@ class VirtualMachineDeployer(object):
         deployed_app_attrs = []
 
         if clone_vm_result.user is not None:
+            logger.debug("Username is: {}".format(clone_vm_result.user))
             deployed_app_attrs.append(Attribute("User", clone_vm_result.user))
 
         if clone_vm_result.password is not None:
