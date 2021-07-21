@@ -83,8 +83,10 @@ class VirtualMachineDeployer(object):
         template_resource_model = data_holder.template_resource_model
 
         if template_resource_model.hdd:
-            logger.warning("Deploy from linked clone doesn't support changes to HDD."
-                           "HDD attribute will be ignored.")
+            logger.warning(
+                "Deploy from linked clone doesn't support changes to HDD. "
+                "HDD attribute will be ignored."
+            )
             template_resource_model.hdd = ""
 
         return self._deploy_a_clone(

@@ -84,11 +84,7 @@ class VmDetailsProvider(object):
                 key="Disk Size", value=self._convert_kb_to_str(disk_size_kb)
             )
         )
-        data.append(
-            VmDetailsProperty(
-                key="Hostname", value=vm.guest.hostName
-            )
-        )
+        data.append(VmDetailsProperty(key="Hostname", value=vm.guest.hostName))
         data.append(
             VmDetailsProperty(key="Guest OS", value=vm.summary.config.guestFullName)
         )
