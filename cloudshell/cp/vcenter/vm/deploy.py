@@ -1,4 +1,7 @@
+import os
 import traceback
+
+from pyVmomi import vim
 
 from cloudshell.cp.core.models import Attribute, DeployAppResult, VmDetailsProperty
 from cloudshell.cp.core.utils import convert_to_bool
@@ -81,13 +84,42 @@ class VirtualMachineDeployer(object):
         """
 
         template_resource_model = data_holder.template_resource_model
+        orig_vm_path, orig_vm_name = os.path.split(template_resource_model.vcenter_vm)
+        orig_vm_path = VMLocation.combine(
+            [vcenter_data_model.default_datacenter, orig_vm_path]
+        )
+        original_vm = self.pv_service.find_vm_by_name(
+            si=si,
+            path=orig_vm_path,
+            name=orig_vm_name,
+        )
 
-        if template_resource_model.hdd:
-            logger.warning(
-                "Deploy from linked clone doesn't support changes to HDD. "
-                "HDD attribute will be ignored."
-            )
-            template_resource_model.hdd = ""
+        disk_count = 0
+        for device in original_vm.config.hardware.device:
+            if isinstance(device, vim.vm.device.VirtualDisk):
+                disk_count += 1
+                logger.debug(
+                    "Original VM Disk {} size {}".format(
+                        disk_count,
+                        device.capacityInKB,
+                    )
+                )
+                if f"{disk_count}:" in template_resource_model.hdd:
+                    logger.error(
+                        f"Disk {disk_count} can not be reconfigured "
+                        f"because it exists in original Virtual Machine."
+                    )
+                    self.folder_manager.delete_folder_if_empty(
+                        si=si,
+                        folder_full_path=VMLocation.combine(
+                            [vcenter_data_model.default_datacenter,
+                             template_resource_model.vm_location]
+                        ),
+                        logger=logger,
+                    )
+                    raise Exception(
+                        "Can not deploy current VM configuration. See logs for details."
+                    )
 
         return self._deploy_a_clone(
             si=si,

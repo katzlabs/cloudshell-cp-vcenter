@@ -58,14 +58,11 @@ class VmDetailsProvider(object):
         data.extend(deployment_details_provider.get_details())
 
         memo_size_kb = vm.summary.config.memorySizeMB * 1024
-        disk_size_kb = next(
-            (
-                device.capacityInKB
-                for device in vm.config.hardware.device
-                if isinstance(device, vim.vm.device.VirtualDisk)
-            ),
-            0,
-        )
+        disk_size_kb = [
+            device.capacityInKB
+            for device in vm.config.hardware.device
+            if isinstance(device, vim.vm.device.VirtualDisk)
+        ]
         snapshot = None
         if vm.snapshot:
             snapshot = self._get_snapshot_path(
@@ -79,11 +76,15 @@ class VmDetailsProvider(object):
         data.append(
             VmDetailsProperty(key="Memory", value=self._convert_kb_to_str(memo_size_kb))
         )
-        data.append(
-            VmDetailsProperty(
-                key="Disk Size", value=self._convert_kb_to_str(disk_size_kb)
+
+        for disk_id, disk_size in enumerate(disk_size_kb, start=1):
+            data.append(
+                VmDetailsProperty(
+                    key=f"Disk {disk_id} Size",
+                    value=self._convert_kb_to_str(disk_size),
+                )
             )
-        )
+
         data.append(VmDetailsProperty(key="Hostname", value=vm.guest.hostName))
         data.append(
             VmDetailsProperty(key="Guest OS", value=vm.summary.config.guestFullName)

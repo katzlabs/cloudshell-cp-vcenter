@@ -751,9 +751,15 @@ class pyVmomiService:
 
         task = vm.ReconfigVM_Task(spec=config_spec)
 
-        return self.task_waiter.wait_for_task(
-            task=task, logger=logger, action_name="Reconfigure VM"
-        )
+        try:
+            return self.task_waiter.wait_for_task(
+                task=task, logger=logger, action_name="Reconfigure VM"
+            )
+        except TaskFaultException as err:
+            logger.error("Error during VM Reconfiguration: {}".format(err))
+            raise ReconfigureVMException(
+                "Error during VM Reconfiguration. See logs for more details."
+            )
 
     def _get_device_controller_key(self, vm):
         """Get SCSI Controller device key for the new VM disk creation.
