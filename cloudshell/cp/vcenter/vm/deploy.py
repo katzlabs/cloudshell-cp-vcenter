@@ -112,8 +112,10 @@ class VirtualMachineDeployer(object):
                     self.folder_manager.delete_folder_if_empty(
                         si=si,
                         folder_full_path=VMLocation.combine(
-                            [vcenter_data_model.default_datacenter,
-                             template_resource_model.vm_location]
+                            [
+                                vcenter_data_model.default_datacenter,
+                                template_resource_model.vm_location
+                            ]
                         ),
                         logger=logger,
                     )
