@@ -114,7 +114,7 @@ class VirtualMachineDeployer(object):
                         folder_full_path=VMLocation.combine(
                             [
                                 vcenter_data_model.default_datacenter,
-                                template_resource_model.vm_location
+                                template_resource_model.vm_location,
                             ]
                         ),
                         logger=logger,
