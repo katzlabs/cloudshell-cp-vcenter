@@ -312,6 +312,11 @@ class VirtualMachineDeployer(object):
         if clone_vm_result.password is not None:
             deployed_app_attrs.append(Attribute("Password", clone_vm_result.password))
 
+        if clone_vm_result.vm.guest.hostName is not None:
+            deployed_app_attrs.append(
+                Attribute("System Name", clone_vm_result.vm.guest.hostName)
+            )
+
         return DeployAppResult(
             vmName=vm_name,
             vmUuid=clone_vm_result.vm.summary.config.uuid,
