@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from cloudshell.cp.vcenter.exceptions.task_waiter import TaskFaultException
-
 
 class VirtualMachinePowerManagementCommand(object):
     def __init__(self, pyvmomi_service, synchronous_task_waiter, event_manager):
@@ -92,15 +90,10 @@ class VirtualMachinePowerManagementCommand(object):
             logger.info("Powering on VM ...")
             start_time = datetime.now()
 
-            try:
-                task = vm.PowerOn()
-                task_result = self.synchronous_task_waiter.wait_for_task(
-                    task=task, logger=logger, action_name="Power On"
-                )
-            except TaskFaultException as err:
-                logger.error(f"{err}")
-                self.pv_service.destroy_vm(vm=vm, logger=logger)
-                raise Exception(err)
+            task = vm.PowerOn()
+            task_result = self.synchronous_task_waiter.wait_for_task(
+                task=task, logger=logger, action_name="Power On"
+            )
 
             if self.pv_service.need_to_wait_for_os_customization(vm):
                 logger.info("Checking for the VM OS customization events...")
