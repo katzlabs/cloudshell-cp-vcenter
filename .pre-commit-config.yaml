@@ -9,7 +9,6 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-        additional_dependencies: ["setuptools"]
   - repo: https://github.com/python/black
     rev: 21.12b0
     hooks:
