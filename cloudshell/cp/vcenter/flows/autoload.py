@@ -16,6 +16,7 @@ class VCenterAutoloadFlow:
     _logger: Logger
 
     def discover(self) -> AutoLoadDetails:
+        self._logger.info("test change")
         si = SiHandler.from_config(self._resource_config, self._logger)
         validation_actions = ValidationActions(si, self._resource_config, self._logger)
         validation_actions.validate_resource_conf()
